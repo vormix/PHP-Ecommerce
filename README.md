@@ -21,3 +21,5 @@ Password: password
 
 4) per far funzionare l'invio mail occorre intervenire sul file "php.ini" 
 (cercare su google come inviare email da localhost con xampp) 
+
+5) aprire http://localhost/php-ecommerce e il sito funzionerà 
