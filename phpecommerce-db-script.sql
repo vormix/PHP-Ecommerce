@@ -26,7 +26,7 @@ DELIMITER $$
 --
 -- Procedure
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `all_orders` (`status_code` VARCHAR(10))  BEGIN
+CREATE  PROCEDURE `all_orders` (`status_code` VARCHAR(10))  BEGIN
   SELECT 
     o.id as order_id
         , o.created_at as created_date
@@ -43,7 +43,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `all_orders` (`status_code` VARCHAR(
     o.created_at DESC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `cart_items` (`cart_identifier` INT)  BEGIN
+CREATE  PROCEDURE `cart_items` (`cart_identifier` INT)  BEGIN
   SELECT 
     c.id as cart_id
         , ci.id as cart_item_id
@@ -65,7 +65,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `cart_items` (`cart_identifier` INT)
         
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `cart_total` (`cart_identifier` INT)  BEGIN
+CREATE  PROCEDURE `cart_total` (`cart_identifier` INT)  BEGIN
  SELECT 
   c.id as cart_id
   , c.user_id as user_id
@@ -81,7 +81,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `cart_total` (`cart_identifier` INT)
     cart_identifier = c.id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `cart_to_order` (`cart_identifier` INT, `order_identifier` INT)  BEGIN
+CREATE  PROCEDURE `cart_to_order` (`cart_identifier` INT, `order_identifier` INT)  BEGIN
   INSERT INTO order_item (order_id, product_id, quantity)
     SELECT order_identifier, ci.product_id, ci.quantity
     FROM cart c
@@ -99,7 +99,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `cart_to_order` (`cart_identifier` I
     
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_email` (`order_identifier` INT)  BEGIN
+CREATE  PROCEDURE `get_order_email` (`order_identifier` INT)  BEGIN
   SELECT u.email, u.first_name
     FROM orders as o
     INNER JOIN user as u
@@ -108,7 +108,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_email` (`order_identifier
     o.id = order_identifier;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `order_items` (`order_identifier` INT)  BEGIN
+CREATE  PROCEDURE `order_items` (`order_identifier` INT)  BEGIN
   SELECT 
     o.id as order_id
         , o.status as order_status
@@ -131,7 +131,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `order_items` (`order_identifier` IN
         
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `order_total` (`order_identifier` INT)  BEGIN
+CREATE  PROCEDURE `order_total` (`order_identifier` INT)  BEGIN
  SELECT 
   o.id as order_id
   , o.user_id as user_id
@@ -147,7 +147,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `order_total` (`order_identifier` IN
     order_identifier = o.id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `user_orders` (`user_identifier` INT, `status_code` VARCHAR(10))  BEGIN
+CREATE  PROCEDURE `user_orders` (`user_identifier` INT, `status_code` VARCHAR(10))  BEGIN
   SELECT 
     o.id as order_id
         , o.created_at as created_date
