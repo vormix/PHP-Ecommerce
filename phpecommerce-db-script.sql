@@ -171,7 +171,7 @@ CREATE TABLE `address` (
 
 INSERT INTO `address` (`id`, `user_id`, `street`, `city`, `cap`) VALUES
 (2, 1, 'Via Admin 1', 'Roma', '00100'),
-(3, 2, 'Via Regular 2', 'Roma', '00100')
+(3, 2, 'Via Regular 2', 'Roma', '00100');
 
 -- --------------------------------------------------------
 
@@ -262,7 +262,7 @@ INSERT INTO `product` (`id`, `name`, `description`, `category_id`, `price`, `sco
 (35, 'Prodotto 11', 'Questo Ã¨ il prodotto numero 10\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 1, '5.00', 0, NULL, NULL, 0),
 (36, 'Prodotto 12', 'Questo Ã¨ il prodotto numero 12\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '8.00', 0, NULL, NULL, 0),
 (37, 'Prodotto 13', 'Questo Ã¨ il prodotto numero 13\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '9.99', 0, NULL, NULL, 0),
-(38, 'Prodotto 14', 'Questo Ã¨ il prodotto numero 14\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '3.99', 0, NULL, NULL, 0),
+(38, 'Prodotto 14', 'Questo Ã¨ il prodotto numero 14\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '3.99', 0, NULL, NULL, 0);
 
 
 -- --------------------------------------------------------
@@ -304,7 +304,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `created_at`, `user_type`, `password`) VALUES
 (1, 'Amministratore', 'Di Sistema', 'admin@email.com', '2019-04-26 21:26:37', 'admin', 'password'),
-(2, 'Regolare', 'Utente', 'regular@email.com', '2019-05-02 16:34:56', 'regular', 'password')
+(2, 'Regolare', 'Utente', 'regular@email.com', '2019-05-02 16:34:56', 'regular', 'password');
 
 --
 -- Indici per le tabelle scaricate
