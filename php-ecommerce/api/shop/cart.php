@@ -5,6 +5,7 @@ if (! defined('ROOT_URL')) {
     die;
   }
 
+  // Instanzio Cart Manager
   $cm = new CartManager();
   $cartId = $cm->getCurrentCartId();
 
