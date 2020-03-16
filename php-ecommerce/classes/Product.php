@@ -79,6 +79,7 @@ class ProductManager extends DBManager {
    // echo $r . $secs . ' Sec';die;
     foreach($products as $product){
       
+      $product->disc_price = NULL;
       if ($product->sconto != "0" && $product->data_inizio_sconto < date('Y-m-d') && $product->data_fine_sconto > date('Y-m-d')){
         $product->disc_price = $product->price - (($product->price * $product->sconto)/100.0);
         $secs ='';
@@ -106,9 +107,9 @@ class ProductManager extends DBManager {
           if ($secs > 0) $r .= '- ';
         }
         
+        $product->remaining_time=$r . $secs . ' Sec';
       } 
     
-    $product->remaining_time=$r . $secs . ' Sec';
     //var_dump($products);
   }
     return $products;
