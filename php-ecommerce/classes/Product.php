@@ -73,6 +73,13 @@ class ProductManager extends DBManager {
     return $product;
   }
 
+  public function GetProductqty($id) {
+    // var_dump($id);die;
+     $product = parent::get($id);
+   // var_dump($product);die;
+    return  $product;
+   }
+
   public function GetProducts() {
     $products = parent::getAll();
     
