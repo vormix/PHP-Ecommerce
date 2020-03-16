@@ -1,0 +1,3 @@
+-- template di test
+-- 
+-- ALTER TABLE `address` ADD `state` VARCHAR(50) NOT NULL AFTER `cap`;
