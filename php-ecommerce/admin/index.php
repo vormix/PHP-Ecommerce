@@ -16,7 +16,7 @@ if ($loggedInUser->user_type != 'admin') {
 $page = isset($_GET["page"]) ? $_GET["page"] : 'dashboard';
 ?>
 <?php include ROOT_PATH . 'public/template-parts/header.php'; ?>
-<div class="container mt-5 newclass">
+<div class="main-content container mt-5 newclass">
   <div class="row">
     <div class="col-lg-9">
       <div class="main">

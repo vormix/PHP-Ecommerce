@@ -41,7 +41,10 @@
           <?php if ($product->disc_price) : ?>
           <span class="badge badge-pill badge-warning">Prezzo speciale <?php echo esc_html($product->disc_price); ?> €</span>
           <span class="badge badge-pill badge-warning">Fino a: <?php echo esc_html($product->remaining_time);  ?></span>
+          
           <?php endif ?>
+          <span class="badge badge-pill badge-info" >Qta:  <?php echo esc_html($product->qta);  ?></span>
+          <br>
           <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>    
                 
         </li>
@@ -71,11 +74,15 @@ $document.ready(function(){
       var $target = $(e.target);
       var $productButtons = $target.closest('div.product-actions');
       var productId = $productButtons.find('input[name="id"]').val();
+
       var postData = {id: productId };
-      
-      $.post('../api/shop/product-list.php', postData, data => { 
-      console.log(data);
-      $('.js-totCartItems').text(parseInt($('.js-totCartItems:last').text())+1);
+       
+      $.post('../api/shop/product-list.php', postData, response => { 
+        console.log(response);
+        displayMessage(response);
+        if (response.result == 'danger') return;
+        
+        $('.js-totCartItems').text(parseInt($('.js-totCartItems:last').text())+1);
        });
     });
 });

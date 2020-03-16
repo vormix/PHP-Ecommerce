@@ -64,6 +64,12 @@ class ProductManager extends DBManager {
     $this->tableName = 'product';
   }
 
+  public function decreaseQuantity($productId) {
+    $product = $this->get($productId);
+    $product->qta = ((int)$product->qta) - 1;
+    $this->update($product, $productId);
+  }
+
   public function GetProductWithImages($productId) {
     $product = $this->get($productId);
     //var_dump($product); die;
@@ -72,13 +78,6 @@ class ProductManager extends DBManager {
     $product->images = $images;
     return $product;
   }
-
-  public function GetProductqty($id) {
-    // var_dump($id);die;
-     $product = parent::get($id);
-   // var_dump($product);die;
-    return  $product;
-   }
 
   public function GetProducts() {
     $products = parent::getAll();
