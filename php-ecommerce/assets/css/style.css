@@ -98,3 +98,15 @@ a.underline{
   display: inline;
 }
 
+
+ol.carousel-indicators li {
+  background: black;
+}
+.delete-img {
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+}
+
+.product-image {position: relative;}

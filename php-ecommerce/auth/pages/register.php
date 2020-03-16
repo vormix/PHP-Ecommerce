@@ -50,6 +50,7 @@ if (isset($_POST['register'])) {
     }
 
     if (!$errors ) {
+      
       $userId = $userMgr->register($nome, $cognome, $email, $password);
       if ($userId > 0){
         $userMgr->createAddress($userId, $street, $city, $cap);

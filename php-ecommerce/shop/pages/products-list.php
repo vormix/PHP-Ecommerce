@@ -19,7 +19,7 @@
   }
   
   $pm = new ProductManager();
-  $products = $pm->getAll();
+  $products = $pm->GetProducts();
 ?>
 
 <h1>Lista Prodotti</h1>
@@ -37,17 +37,23 @@
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
           <?php echo substr(esc_html($product->description), 0, 50); ?>
-          <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>
+          <br>
+          <?php if ($product->disc_price) : ?>
+          <span class="badge badge-pill badge-warning">Prezzo speciale <?php echo esc_html($product->disc_price); ?> €</span>
+          <span class="badge badge-pill badge-warning">Fino a: <?php echo esc_html($product->remaining_time);  ?></span>
+          <?php endif ?>
+          <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>    
+                
         </li>
       </ul>
       <div class="footer">
         <div class="product-actions">
           <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id); ?>'">Vedi</button>
           <!--<a class="btn btn-outline-primary btn-sm" href="#">Aggiungi al carrello</a>-->
-          <form method="post">
+         <!-- <form method="post">-->
             <input type="hidden" name="id" value="<?php echo esc_html($product->id); ?>">
             <input name="add_to_cart" type="submit" class="btn btn-primary btn-sm btn-block rounded-0" value="Aggiungi al carrello">
-          </form>
+          <!--</form>-->
         </div>
       </div>
     </div>
@@ -57,3 +63,21 @@
 <?php else : ?>
 
 <?php endif; ?>
+<script>
+var $document = $(document);
+$document.ready(function(){
+    $document.find('.product-card input:submit').on('click', e => {
+     
+      var $target = $(e.target);
+      var $productButtons = $target.closest('div.product-actions');
+      var productId = $productButtons.find('input[name="id"]').val();
+      var postData = {id: productId };
+      
+      $.post('../api/shop/product-list.php', postData, data => { 
+      console.log(data);
+      $('.js-totCartItems').text(parseInt($('.js-totCartItems:last').text())+1);
+       });
+    });
+});
+
+</script>

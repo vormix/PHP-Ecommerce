@@ -82,7 +82,7 @@ class DB {
   }
 
  public function update_one($tableName, $columns = array(), $id) {
-
+  
     $id = esc($id);
     $strCol = '';
     foreach($columns as $colName => $colValue) {
@@ -92,7 +92,8 @@ class DB {
     $strCol = substr($strCol, 0, -1);
 
     $query = "UPDATE $tableName SET $strCol WHERE id = $id";
-
+    $query = str_replace("'NULL'", "NULL", $query);
+    //var_dump($query); die;
     if (mysqli_query($this->conn, $query)) {
       $rowsAffected = mysqli_affected_rows($this->conn);
 
@@ -157,6 +158,7 @@ class DBManager {
   }
 
   public function create($obj) {
+  //var_dump($obj);die;
     $newId = $this->db->insert_one($this->tableName, (array) $obj);
     return $newId;
   }

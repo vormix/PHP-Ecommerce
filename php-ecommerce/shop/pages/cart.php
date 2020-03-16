@@ -21,7 +21,7 @@
 
   $cart_total = $cm->getCartTotal($cartId);
   $cart_items = $cm->getCartItems($cartId);
-  // var_dump($cartId);
+   //var_dump($cartId);die;
   // var_dump($cart_items);
   // var_dump($cart_total);
 ?>
@@ -30,11 +30,11 @@
   <?php if (count($cart_items) > 0) : ?>
     <h4 class="d-flex justify-content-between align-items-center mb-3">
       <span class="text-primary">Carrello</span>
-      <span class="badge badge-secondary badge-pill"><?php echo esc_html($cart_total[0]['num_products']); ?> prodotti nel carrello</span>
+      <span class="badge badge-secondary badge-pill"><span id="numOfCartItems"><?php echo esc_html($cart_total[0]['num_products']); ?></span> prodotti nel carrello</span>
     </h4>
     <ul class="list-group mb-3">
     <?php foreach ($cart_items as $item) : ?>
-    <li class="list-group-item d-flex justify-content-between lh-condensed p-4">
+    <li data-product-id="<?php echo esc_html($item['product_id']); ?>" class="list-group-item product-box d-flex justify-content-between lh-condensed p-4">
       <div class="row w-100">      
         <div class="col-lg-4 col-6">
           <h6 class="my-0 text-primary"><?php echo esc_html($item['product_name']); ?></h6>
@@ -44,19 +44,19 @@
           <strong class="text-muted">€ <?php echo esc_html($item['single_price']); ?></strong>
         </div>  
         <div class="col-lg-4 col-6">
-          <form method="post">
+          <!-- <form method="post"> -->
             <div class="cart-buttons btn-group btn-group-toggle">
               <input name="minus" class="btn btn-primary btn-sm left" type="submit" value="-">
               <input type="hidden" name="cart_id" value="<?php echo esc_html($item['cart_id']); ?>">
               <input type="hidden" name="product_id" value="<?php echo esc_html($item['product_id']); ?>">
               <span class="text-muted"><?php echo esc_html($item['quantity']); ?></span>
-              <input name="plus" class="btn btn-primary btn-sm right" type="submit" value="+" >
+              <input id="plus" name="plus" class="btn btn-primary btn-sm right" type="submit" value="+" >
             </div>
-          </form>
+          <!-- </form> -->
          
         </div>
         <div class="col-lg-2 col-6">
-          <strong class="text-primary">€ <?php echo esc_html($item['total_price']); ?></strong>
+          <strong class="text-primary total">€ <?php echo esc_html($item['total_price']); ?></strong>
         </div>  
       </div>   
     </li>
@@ -68,7 +68,7 @@
             </div>
             <div class="col-lg-6 lg-screen"></div>
             <div class="col-lg-2 col-6">
-              <span class="text-primary">€ <?php echo esc_html($cart_total[0]['total']); ?></span>
+              <span id="spanGrandTotal" class="text-primary">€ <?php echo esc_html($cart_total[0]['total']); ?></span>
             </div>
           </div>
         </li>
@@ -88,3 +88,65 @@
   <?php endif ; ?>
 
 </div>
+
+<script>
+var $document = $(document);
+$document.ready(function(){
+  $document.find('.order-md-2 input:submit').on('click', e => {
+    var $target = $(e.target);
+    var $productButtons = $target.closest('div.cart-buttons');
+   // e.preventDefault();
+
+    var productId = $productButtons.find('input[name="product_id"]').val();
+    var cartId = $productButtons.find('input[name="cart_id"]').val();
+    var incrementOrDecrement = $target.is('input[name="plus"]') ? 'plus': 'minus';
+
+    var postData = {
+      cart_id: cartId,
+      product_id: productId
+    };
+    postData[incrementOrDecrement]= "QUALCOSA"; 
+
+    // console.log('productId', productId, 'cartId,', cartId);
+    // return;
+
+    $.post('../api/shop/cart.php', postData, data => { 
+      console.log(data);
+      printTotal(data.cartTotal);
+      printProductBoxes(data.cart_items, productId);
+      printNumOfCartItems(data.cart_items);
+      var $quantitySpan = $productButtons.find('.text-muted');
+      var previousQuantity = parseInt($quantitySpan.text());
+      $quantitySpan.text(incrementOrDecrement == 'plus' ? ++previousQuantity : --previousQuantity);
+      if (previousQuantity == 0) {
+        $productButtons.closest('.product-box').fadeOut('slow', function() {
+            $(this).remove();
+        });
+      }
+    });
+  });
+});
+
+function printNumOfCartItems(cart_items) {
+  var $span = $('#numOfCartItems');
+  var $cartBadge = $('.js-totCartItems');
+  var totItems = 0;
+  $.each(cart_items, (index,product) => {
+    totItems += parseInt(product.quantity);
+  });
+  $span.text(totItems);
+  $cartBadge.text(totItems);
+}
+
+function printTotal(cartTotal){
+  $('#spanGrandTotal').text('€ '+(cartTotal[0].total != null ? cartTotal[0].total : "0,00"));
+}
+
+function printProductBoxes(cart_items, productId){
+  $.each(cart_items, (index,product) => {
+    if (product.product_id == productId){
+      $('.product-box[data-product-id="'+productId+'"]').find('.total').text('€ '+ product.total_price);
+    }
+  });
+}
+</script>
