@@ -26,7 +26,7 @@
 
     public function __construct(){
       parent::__construct();
-      $this->tableName = 'User';
+      $this->tableName = 'user';
       $this->columns = array('id', 'email', 'first_name', 'last_name', 'user_type');
     }
 

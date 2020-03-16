@@ -56,7 +56,7 @@
     public function __construct(){
       parent::__construct();
       $this->columns = array( 'id', 'user_id', 'status' );
-      $this->tableName = 'Orders';
+      $this->tableName = 'orders';
     }
 
     public function updateStatus($orderId, $status){

@@ -61,7 +61,7 @@ class ProductManager extends DBManager {
   public function __construct(){
     parent::__construct();
     $this->columns = array( 'id', 'name', 'price', 'description', 'category_id', 'sconto', 'data_inizio_sconto', 'data_fine_sconto', 'qta' );
-    $this->tableName = 'Product';
+    $this->tableName = 'product';
   }
 
   public function GetProductWithImages($productId) {
