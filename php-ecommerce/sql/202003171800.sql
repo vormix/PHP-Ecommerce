@@ -1,0 +1,1 @@
+alter table product_images drop foreign key FK_Product_Image;

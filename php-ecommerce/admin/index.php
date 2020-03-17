@@ -20,10 +20,10 @@ $page = isset($_GET["page"]) ? $_GET["page"] : 'dashboard';
   <div class="row">
     <div class="col-lg-9">
       <div class="main">
-        <?php if ($page != 'dashboard' AND $page != 'process-order') : ?>
+        <!-- <?php if ($page != 'dashboard' AND $page != 'process-order') : ?>
           <a class="back underline" href="<?php echo ROOT_URL; ?>admin?page=dashboard">&laquo; Torna al cruscotto</a>
           <br>
-        <?php endif; ?>
+        <?php endif; ?> -->
         <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
         <?php include "pages/$page.php"; ?>
         <?php include ROOT_PATH . 'inc/alert-message.php'; ?>

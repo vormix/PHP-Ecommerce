@@ -19,6 +19,10 @@ class ProductImageManager extends DBManager {
     $this->tableName = 'product_images';
   }
 
+  public function GetImagesPath() {
+    return ROOT_PATH . '/images/';
+  }
+
   public function getImages($productId) {
     $images = parent::getAll();
     
@@ -42,7 +46,8 @@ class Product {
   public $data_inizio_sconto;
   public $data_fine_sconto;
   public $qta;
-  public function __construct($id, $name, $price, $description, $category_id, $sconto = 0, $data_inizio_sconto = NULL, $data_fine_sconto = NULL,$qta){
+
+  public function __construct($id, $name, $price, $description, $category_id, $sconto = 0, $data_inizio_sconto = NULL, $data_fine_sconto = NULL, $qta = 0){
     $this->id = (int)$id;
     $this->name = $name;
     $this->price = (float)$price;
@@ -52,6 +57,11 @@ class Product {
     $this->data_inizio_sconto = $data_inizio_sconto == NULL ? '1900-01-01' : $data_inizio_sconto;
     $this->data_fine_sconto = $data_fine_sconto == NULL ? '2099-12-31' : $data_fine_sconto;
     $this->qta = (int) $qta;
+
+  }
+
+  public static function CreateEmpty() {
+    return new Product(0, "", 0, "", 0, 0, NULL, NULL, 0);
   }
 
 }
@@ -68,6 +78,22 @@ class ProductManager extends DBManager {
     $product = $this->get($productId);
     $product->qta = ((int)$product->qta) - 1;
     $this->update($product, $productId);
+  }
+
+  public function MoveTempImages($tmpDir, $productId) {
+    $imgMgr = new ProductImageManager();
+    $imgPath = $imgMgr->GetImagesPath();
+    rename("$imgPath/$tmpDir", "$imgPath/$productId");
+
+    $files = scandir("$imgPath/$productId");
+
+    foreach($files as $file) {
+      if (strpos($file, '.jpg') != false) {
+        $imgId = str_replace(".jpg", "", $file);
+        $query="UPDATE product_images SET product_id = '$productId' WHERE id = '$imgId'"; 
+        $this->db->exec($query);
+      }
+    }
   }
 
   public function GetProductWithImages($productId) {

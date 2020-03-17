@@ -1,9 +1,11 @@
 <?php
 
-require_once './inc/init.php'; 
+require_once '../../inc/init.php'; 
 
-if (! defined('ROOT_URL')) {
-  die;
+if (!$loggedInUser || $loggedInUser->user_type != 'admin') {
+  header('HTTP/1.0 403 Forbidden');
+  echo 'Forbidden';
+  exit;
 }
 
 $imageId = $_POST['imageId'];

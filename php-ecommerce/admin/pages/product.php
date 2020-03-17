@@ -5,8 +5,8 @@ if (! defined('ROOT_URL')) {
 }
 
 $mgr = new ProductManager();
-//$product = new Product(0, '', 0, '', 0);
-
+$product = Product::CreateEmpty();
+$product->images = [];
 
 global $alertMsg;
 
@@ -15,17 +15,17 @@ $submit = 'add';
 
 // Querystring param id
 if (isset($_GET['id'])) {
-
+  
   $id = trim($_GET['id']);
   $product = $mgr->GetProductWithImages($id);
-
+  
   $lblAction = 'Modifica';
   $submit = 'update';
 }
 
 // Submit add
 if (isset($_POST['add'])) {
-
+  
   $name = trim($_POST['name']);
   $category_id = trim($_POST['category_id']);
   $description = trim($_POST['description']);
@@ -34,12 +34,18 @@ if (isset($_POST['add'])) {
   $data_inizio_sconto = trim($_POST['data_inizio_sconto']);
   $data_fine_sconto = trim($_POST['data_fine_sconto']);
   $qta = trim($_POST['qta']);
+  $tmpDir = isset($_POST['tmpDir']) ? $_POST['tmpDir'] : NULL;
 
   if ($name != '' && $category_id != '' && $category_id != '0' && $description != '' && $price != '') {
 
-    $id = $mgr->create(new Product(0, $name, $price, $description, $category_id, $sconto, $data_inizio_sconto, $data_fine_sconto, $qta));
+    $product = new Product(0, $name, $price, $description, $category_id, $sconto, $data_inizio_sconto, $data_fine_sconto, $qta);
+    $id = $mgr->create($product);
 
     if ($id > 0) {
+      if ($tmpDir) {
+        $mgr->MoveTempImages($tmpDir, $id);        
+      }
+
       echo "<script>location.href='".ROOT_URL."admin?page=products-list&msg=created';</script>";
       exit;
     } else {
@@ -66,19 +72,11 @@ if (isset($_POST['update'])) {
 
 
   if ($id != '' && $id != '0' && $name != '' && $category_id != '' && $category_id != '0' && $description != '' && $price != '') {
-    // var_dump($data_fine_sconto); die;
-    // if($data_inizio_sconto != null){
-    //   $parts = explode('/', $data_inizio_sconto);
-    //   $dateStart  = "$parts[2]-$parts[1]-$parts[0]";
-    // }
-    // if($data_fine_sconto != null){
-    //   $parts = explode('/', $data_fine_sconto);
-    //   $dateEnd  = "$parts[2]-$parts[1]-$parts[0]";
-    // }
 
-    $numUpdated = $mgr->update(new Product($id, $name, $price, $description, $category_id,  $sconto, $data_inizio_sconto, $data_fine_sconto,$qta ), $id);
+    $product = new Product($id, $name, $price, $description, $category_id,  $sconto, $data_inizio_sconto, $data_fine_sconto,$qta);
+    $numUpdated = $mgr->update($product, $id);
 
-    if ($numUpdated > 0) {
+    if ($numUpdated >= 0) {
       echo "<script>location.href='".ROOT_URL."admin?page=products-list&msg=updated';</script>";
       exit;
     } else {
@@ -94,7 +92,7 @@ if (isset($_POST['update'])) {
 
 <h1><?php echo esc_html($lblAction); ?> Prodotto</h1>
 
-<form method="post" class="mt-5">
+<form method="post" class="mt-2">
   <div class="form-group">
     <label for="name">Nome</label>
     <input name="name" id="name" type="text" class="form-control" value="<?php echo esc_html($product->name); ?>">
@@ -166,33 +164,35 @@ if (isset($_POST['update'])) {
     </div>
 
     <div class="col-md-12">
-      <div class="input-group mb-3">
+      <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text" id="imgLbl">Immagini</span>
         </div>
         <div class="custom-file">
           <input type="file" class="custom-file-input" id="img" aria-describedby="imgLbl" accept=".jpg" multiple>
-          <label class="custom-file-label" for="inputGroupFile01">Carica Immagine...</label>
+          <label class="custom-file-label" for="inputGroupFile01">Aggiungi Immagini...</label>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="images-wrapper">
-    <?php if ($product->images ) : ?>
-    <div class="row product-images">
-      <?php foreach ($product->images as $image) : ?>
-      <div class="product-image col-md-3 col-sm-4 col-6">
-        <span data-id="<?php echo $image->id ?>" title="Elimina" class="delete-img badge badge-danger p-2 rounded-circle">&times;</span>
-        <img data-id="<?php echo $image->id ?>" class="img-thumbnail" src="<?php echo ROOT_URL . '/images/' . $product->id . '/' . $image->id . '.' . $image->image_extension ?>" />
+    <div class="images-wrapper">
+      <?php if ($product->images ) : ?>
+      <div class="row product-images">
+        <?php foreach ($product->images as $image) : ?>
+        <div class="product-image col-md-3 col-sm-4 col-6">
+          <span data-id="<?php echo $image->id ?>" title="Elimina" class="delete-img badge badge-danger p-2 rounded-circle">&times;</span>
+          <img data-id="<?php echo $image->id ?>" class="img-thumbnail" src="<?php echo ROOT_URL . '/images/' . $product->id . '/' . $image->id . '.' . $image->image_extension ?>" />
+        </div>
+        <?php endforeach ?>
       </div>
-      <?php endforeach ?>
+      <?php endif ?>
     </div>
-    <?php endif ?>
+
   </div>
 
   <input type="hidden" id="id" name="id" value="<?php echo esc_html($product->id); ?>">
-  <input name="<?php echo esc_html($submit); ?>" type="submit" class="btn btn-primary" value="<?php echo esc_html($lblAction); ?> Prodotto">
+  <input type="hidden" id="tmpDir" name="tmpDir">
+  <input name="<?php echo esc_html($submit); ?>" type="submit" class="btn btn-primary mt-3" value="<?php echo esc_html($lblAction); ?> Prodotto">
 </form>
 
 <script>
@@ -208,7 +208,7 @@ function deleteFile(e) {
 
   var $target = $(e.target);
   var imageId = $target.attr('data-id');
-  $.post('../delete.php', {imageId: imageId}, response => {
+  $.post('../api/admin/delete.php', {imageId: imageId}, response => {
     $target.closest('.product-image').fadeOut('slow', function(){$(this).remove();});
   });
 }
@@ -220,45 +220,54 @@ function createImgList() {
 function uploadFiles() {
 
   var $img = $('#img');
-  var productId = $('#id').val();  
-  var form_data = new FormData();                  
+  var productId = $('#id').val(); 
+  var tmpDir = $('#tmpDir').val();
+  
+  var form_data = new FormData();  
+
   form_data.append('productId', productId);
+  form_data.append('tmpDir', tmpDir);
 
   $.each($img.prop('files'), function (index, file) {
-    form_data.append('file', file);
+    form_data.append('file-' + index, file);
   });
-  //var file_data = $img.prop('files')[0];   
+                           
+  $.ajax({
+    url: '../api/admin/upload.php', 
+    dataType: 'text',  
+    cache: false,
+    contentType: false,
+    processData: false,
+    data: form_data,                         
+    type: 'post',
+    success: function(response){
+      response = JSON.parse(response);
 
+      var images = response.images;
+      tmpDir = response.tmpDir;
+      $('#tmpDir').val(tmpDir);
 
-    //alert(form_data);                             
-    $.ajax({
-        url: '../upload.php', // point to server-side PHP script 
-        dataType: 'text',  // what to expect back from the PHP script, if anything
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: form_data,                         
-        type: 'post',
-        success: function(response){
-            var image = JSON.parse(response).image;
-            var $imgList = $('.product-images');
-            if ($imgList.length == 0) {
-              createImgList();
-            }
-            $imgList = $('.product-images');
+      var $imgList = $('.product-images');
+      if ($imgList.length == 0) {
+        createImgList();
+      }
+      $imgList = $('.product-images');
 
-            var htmlStr = `
-            <div class="product-image col-md-3 col-sm-4 col-6">
-              <span data-id="${image.id}" title="Elimina" class="delete-img badge badge-danger p-2 rounded-circle">&times;</span>
-              <img data-id="${image.id}" class="img-thumbnail" src="<?php echo ROOT_URL ?>/images/${image.product_id}/${image.id}.jpg" />
-            </div>
-            `;
-            $imgList.append(htmlStr);
-        },
-        error: function (err) {
-          alert(err);
-        }
-     });
+      var htmlStr = '';
+      $.each(images, (i, image) => {
+        htmlStr += `
+        <div class="product-image col-md-3 col-sm-4 col-6">
+          <span data-id="${image.id}" title="Elimina" class="delete-img badge badge-danger p-2 rounded-circle">&times;</span>
+          <img data-id="${image.id}" class="img-thumbnail" src="<?php echo ROOT_URL ?>/images/${image.product_id}/${image.id}.jpg" />
+        </div>
+        `;
+      });
+      $imgList.append(htmlStr);
+    },
+    error: function (err) {
+      alert(err);
+    }
+  });
 
 }
 </script>
