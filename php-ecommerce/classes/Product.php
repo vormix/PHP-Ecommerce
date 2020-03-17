@@ -49,8 +49,14 @@ class Product {
     $this->description = $description;
     $this->category_id = (int)$category_id;
     $this->sconto = (int)$sconto;
-    $this->data_inizio_sconto = $data_inizio_sconto == NULL ? '1900-01-01' : $data_inizio_sconto;
-    $this->data_fine_sconto = $data_fine_sconto == NULL ? '2099-12-31' : $data_fine_sconto;
+    if($this->sconto>0){
+      $this->data_inizio_sconto = $data_inizio_sconto == NULL ? '1900-01-01' : $data_inizio_sconto;
+      $this->data_fine_sconto = $data_fine_sconto == NULL ? '2099-01-01' : $data_fine_sconto;
+    }else{
+      $this->data_inizio_sconto = $data_inizio_sconto == NULL ? '1900-01-01' : $data_inizio_sconto;
+      $this->data_fine_sconto = $data_fine_sconto == NULL ? '1900-01-01' : $data_fine_sconto;
+      
+    }
     $this->qta = (int) $qta;
   }
 
@@ -69,7 +75,11 @@ class ProductManager extends DBManager {
     $product->qta = ((int)$product->qta) - 1;
     $this->update($product, $productId);
   }
-
+  public function increaseQuantity($productId) {
+    $product = $this->get($productId);
+    $product->qta = ((int)$product->qta) + 1;
+    $this->update($product, $productId);
+  }
   public function GetProductWithImages($productId) {
     $product = $this->get($productId);
     //var_dump($product); die;
@@ -86,7 +96,7 @@ class ProductManager extends DBManager {
     foreach($products as $product){
       
       $product->disc_price = NULL;
-      if ($product->sconto != "0" && $product->data_inizio_sconto < date('Y-m-d') && $product->data_fine_sconto > date('Y-m-d')){
+      if ($product->sconto != "0" && $product->data_inizio_sconto <= date('Y-m-d') && $product->data_fine_sconto >= date('Y-m-d')){
         $product->disc_price = $product->price - (($product->price * $product->sconto)/100.0);
         $secs ='';
         $days ='';

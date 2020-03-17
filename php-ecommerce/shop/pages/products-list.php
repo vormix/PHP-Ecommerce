@@ -29,7 +29,15 @@
 
 <div class="row">
 
-    <?php foreach($products as $product) : ?>
+    <?php foreach($products as $product) : 
+      if($product->qta==1){
+        $btn="disabled";
+        $qta="Non Disp.";
+
+      }else{
+        $btn="";
+        $qta="Qta: ".$product->qta;
+      }?>
     <div class="product-card card mb-3 col-md-3 col-6" >
       <div class="card-header bg-dark text-light rounded-0">
         <?php echo esc_html($product->name); ?>
@@ -43,8 +51,8 @@
           <span class="badge badge-pill badge-warning">Fino a: <?php echo esc_html($product->remaining_time);  ?></span>
           
           <?php endif ?>
-          <span class="badge badge-pill badge-info" >Qta:  <?php echo esc_html($product->qta);  ?></span>
-          <br>
+          <span class="badge badge-pill badge-info" ><?php echo esc_html($qta);  ?></span>
+         
           <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>    
                 
         </li>
@@ -55,7 +63,7 @@
           <!--<a class="btn btn-outline-primary btn-sm" href="#">Aggiungi al carrello</a>-->
          <!-- <form method="post">-->
             <input type="hidden" name="id" value="<?php echo esc_html($product->id); ?>">
-            <input name="add_to_cart" type="submit" class="btn btn-primary btn-sm btn-block rounded-0" value="Aggiungi al carrello">
+            <input name="add_to_cart" type="submit" class="btn btn-primary btn-sm btn-block rounded-0" value="Aggiungi al carrello" <?php echo $btn;?>>
           <!--</form>-->
         </div>
       </div>
@@ -65,7 +73,7 @@
 </div>
 <?php else : ?>
 
-<?php endif; ?>
+<?php endif;?>
 <script>
 var $document = $(document);
 $document.ready(function(){
