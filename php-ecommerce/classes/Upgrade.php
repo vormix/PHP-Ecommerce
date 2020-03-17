@@ -96,12 +96,8 @@ class UpgradeManager extends DBManager {
         unset($files[$i]);
         continue;
       }
-      //$result = $this->db->exec($content);
     }
     return $files;
   }
-  //var_dump($result); die;
-  // $result = $this->db->query("SELECT street, city, cap FROM address WHERE user_id = $userId");
-  //     return $result ? $result[0] : null;
  
  }

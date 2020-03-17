@@ -16,15 +16,21 @@ class DB {
   }
 
   public function query($sql) {
-    $q = $this->pdo->query($sql);
-    if(!$q)
+    try
     {
-      $errMsg = $this->pdo->errorInfo()[2];
-      throw new Exception($errMsg);
+      $q = $this->pdo->query($sql);
+      if (!$q){
+        throw new Exception("Error executing query...");
+        return;
+      }
+      $data = $q->fetchAll(); 
+      return $data;
+    }
+    catch(Exception $e)
+    {
+      throw $e;
     }
     
-    $data = $q->fetchAll(); 
-    return $data;
   }
 
   public function exec($sql) {
