@@ -19,11 +19,31 @@ class DB {
     $q = $this->pdo->query($sql);
     if(!$q)
     {
-      die("Execute query error, because: ". print_r($this->pdo->errorInfo(),true) );
+      $errMsg = $this->pdo->errorInfo()[2];
+      throw new Exception($errMsg);
     }
     
     $data = $q->fetchAll(); 
     return $data;
+  }
+
+  public function exec($sql) {
+    // $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 1);
+    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+        $message = $e->getMessage();
+        //var_dump($e); die;
+        //var_dump($message); die;
+
+        return ['result' => false, 'message' => $message ];
+    }
+    return ['result' => true, 'message' => 'OK' ];
   }
 
  public function select_all($tableName, $columns = array()) {
