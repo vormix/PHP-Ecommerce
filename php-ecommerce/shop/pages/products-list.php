@@ -82,6 +82,8 @@ $document.ready(function(){
       var $target = $(e.target);
       var $productButtons = $target.closest('div.product-actions');
       var productId = $productButtons.find('input[name="id"]').val();
+      var $qta = $target.closest('.product-card').find('.qta');
+      var qta = parseInt($qta.text());
 
       var postData = {id: productId };
        
@@ -90,6 +92,12 @@ $document.ready(function(){
         displayMessage(response);
         if (response.result == 'danger') return;
         
+        if (qta <= 2) {
+          $qta.text("Non Disp.");
+          $target.attr('disabled', 'disabled');
+        } else {
+          $qta.text(--qta);
+        }
         $('.js-totCartItems').text(parseInt($('.js-totCartItems:last').text())+1);
        });
     });
