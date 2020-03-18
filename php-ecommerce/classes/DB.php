@@ -16,14 +16,40 @@ class DB {
   }
 
   public function query($sql) {
-    $q = $this->pdo->query($sql);
-    if(!$q)
+    try
     {
-      die("Execute query error, because: ". print_r($this->pdo->errorInfo(),true) );
+      $q = $this->pdo->query($sql);
+      if (!$q){
+        throw new Exception("Error executing query...");
+        return;
+      }
+      $data = $q->fetchAll(); 
+      return $data;
+    }
+    catch(Exception $e)
+    {
+      throw $e;
     }
     
-    $data = $q->fetchAll(); 
-    return $data;
+  }
+
+  public function exec($sql) {
+    // $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 1);
+    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+        $message = $e->getMessage();
+        //var_dump($e); die;
+        //var_dump($message); die;
+
+        return ['result' => false, 'message' => $message ];
+    }
+    return ['result' => true, 'message' => 'OK' ];
   }
 
  public function select_all($tableName, $columns = array()) {
