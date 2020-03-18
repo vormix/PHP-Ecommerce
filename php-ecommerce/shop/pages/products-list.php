@@ -30,13 +30,13 @@
 <div class="row">
 
     <?php foreach($products as $product) : 
-      if($product->qta==1){
+      if($product->qta <= 1){
         $btn="disabled";
-        $qta="Non Disp.";
+        $qta="Qta: Non Disp.";
 
       }else{
         $btn="";
-        $qta="Qta: ".$product->qta;
+        $qta="Qta: <span class='qta'>".$product->qta . "</span>";
       }?>
     <div class="product-card card mb-3 col-md-3 col-6" >
       <div class="card-header bg-dark text-light rounded-0">
@@ -51,7 +51,7 @@
           <span class="badge badge-pill badge-warning">Fino a: <?php echo esc_html($product->remaining_time);  ?></span>
           
           <?php endif ?>
-          <span class="badge badge-pill badge-info" ><?php echo esc_html($qta);  ?></span>
+          <span class="badge badge-pill badge-info" ><?php echo $qta;  ?></span>
          
           <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>    
                 
