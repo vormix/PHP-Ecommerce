@@ -10,7 +10,7 @@ $mgr = new ProductManager();
 if (isset($_POST['delete'])) {
 
   $id = trim($_POST['id']);
-  $mgr->delete($id);
+  $mgr->DeleteProduct($id);
   $alertMsg = 'deleted';
 }
 

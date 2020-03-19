@@ -157,5 +157,23 @@ class ProductManager extends DBManager {
   }
     return $products;
   }
+
+  public function DeleteProduct($productId) {
+    $this->delete($productId);
+    $this->_deleteImagesFromFileSystem($productId);
+    $this->_deleteImagesFromDB($productId);
+  }
+
+  // Private Methods
+  private function _deleteImagesFromFileSystem($productId){
+    $imgMgr = new ProductImageManager();
+    $dirname = $imgMgr->GetImagesPath() . $productId;
+    array_map('unlink', glob("$dirname/*.*"));
+    rmdir($dirname);
+  }
+
+  private function _deleteImagesFromDB($productId){
+    $this->db->query("DELETE FROM product_images WHERE product_id = $productId");
+  }
  
  }
