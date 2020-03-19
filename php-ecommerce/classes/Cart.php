@@ -409,6 +409,7 @@
         , ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
             CAST((`price` -(`price`*`sconto`)/100) AS DECIMAL(8,2)) 
             ,ifnull(`price`, 0)) as total_price
+        , ifnull(p.qta, 0) as available_quantity
       FROM
         cart as c
         INNER JOIN cart_item as ci

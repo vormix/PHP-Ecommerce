@@ -22,7 +22,7 @@
   $cart_total = $cm->getCartTotal($cartId);
   $cart_items = $cm->getCartItems($cartId);
    //var_dump($cartId);die;
-  // var_dump($cart_items);
+  //var_dump($cart_items); die;
   // var_dump($cart_total);
 ?>
 
@@ -34,6 +34,9 @@
     </h4>
     <ul class="list-group mb-3">
     <?php foreach ($cart_items as $item) : ?>
+    <?php
+    $disabled = $item['available_quantity'] <= 1 ? "disabled='disabled'" : '';
+    ?>
     <li data-product-id="<?php echo esc_html($item['product_id']); ?>" class="list-group-item product-box d-flex justify-content-between lh-condensed p-4">
       <div class="row w-100">      
         <div class="col-lg-4 col-6">
@@ -50,7 +53,7 @@
               <input type="hidden" name="cart_id" value="<?php echo esc_html($item['cart_id']); ?>">
               <input type="hidden" name="product_id" value="<?php echo esc_html($item['product_id']); ?>">
               <span class="text-muted"><?php echo esc_html($item['quantity']); ?></span>
-              <input id="plus" name="plus" class="btn btn-primary btn-sm right" type="submit" value="+" >
+              <input <?php echo $disabled ?> id="plus" name="plus" class="btn btn-primary btn-sm right" type="submit" value="+" >
             </div>
           <!-- </form> -->
          
@@ -107,22 +110,12 @@ $document.ready(function(){
     };
     postData[incrementOrDecrement]= "QUALCOSA"; 
 
-    // console.log('productId', productId, 'cartId,', cartId);
-    // return;
-
     $.post('../api/shop/cart.php', postData, data => { 
       console.log(data);
       printTotal(data.cartTotal);
-      printProductBoxes(data.cart_items, productId);
+      printProductBox(data.cart_items, productId, $productButtons, incrementOrDecrement);
       printNumOfCartItems(data.cart_items);
-      var $quantitySpan = $productButtons.find('.text-muted');
-      var previousQuantity = parseInt($quantitySpan.text());
-      $quantitySpan.text(incrementOrDecrement == 'plus' ? ++previousQuantity : --previousQuantity);
-      if (previousQuantity == 0) {
-        $productButtons.closest('.product-box').fadeOut('slow', function() {
-            $(this).remove();
-        });
-      }
+      
     });
   });
 });
@@ -142,11 +135,31 @@ function printTotal(cartTotal){
   $('#spanGrandTotal').text('€ '+(cartTotal[0].total != null ? cartTotal[0].total : "0,00"));
 }
 
-function printProductBoxes(cart_items, productId){
+function printProductBox(cart_items, productId, $productButtons, incrementOrDecrement){
+  var clickedProduct = null;
   $.each(cart_items, (index,product) => {
     if (product.product_id == productId){
-      $('.product-box[data-product-id="'+productId+'"]').find('.total').text('€ '+ product.total_price);
+      clickedProduct = product;
+      $('.product-box[data-product-id="'+productId+'"]').find('.total').text('€ '+ clickedProduct.total_price);
     }
   });
+
+  var $plusBtn = $productButtons.find('input[name="plus"]');
+  if (parseInt(incrementOrDecrement == 'plus' && clickedProduct.available_quantity) <= 1) {
+    $plusBtn.attr('disabled', 'disabled');
+  }
+
+  if (incrementOrDecrement == 'minus') {
+    $plusBtn.removeAttr('disabled');
+  }
+
+  var $quantitySpan = $productButtons.find('.text-muted');
+  var previousQuantity = parseInt($quantitySpan.text());
+  $quantitySpan.text(incrementOrDecrement == 'plus' ? ++previousQuantity : --previousQuantity);
+  if (previousQuantity == 0) {
+    $productButtons.closest('.product-box').fadeOut('slow', function() {
+        $(this).remove();
+    });
+  }
 }
 </script>
