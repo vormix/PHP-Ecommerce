@@ -200,8 +200,16 @@ var $document = $(document);
 $document.ready(function() {
   $('#img').on('change', uploadFiles );
 
-  $document.on('click', '.delete-img', e => deleteFile(e))
+  $document.on('click', '.delete-img', e => deleteFile(e));
+  window.addEventListener('beforeunload', removeTempImages, false);
 });
+
+function removeTempImages(){
+  var tmpDir = $('#tmpDir').val();
+    if (tmpDir != null && tmpDir != "") {
+      $.post('../api/admin/delete.php', {action: 'removeTempImages', tmpDir: tmpDir});
+    }
+}
 
 function deleteFile(e) {
   if (!confirm("Confermi eliminazione ?")) return;

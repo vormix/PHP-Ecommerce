@@ -164,6 +164,10 @@ class ProductManager extends DBManager {
     $this->_deleteImagesFromDB($productId);
   }
 
+  public function DeleteTempImages($tmpDir){
+    $this->_deleteImagesFromFileSystem($tmpDir);
+  }
+
   // Private Methods
   private function _deleteImagesFromFileSystem($productId){
     $imgMgr = new ProductImageManager();

@@ -8,15 +8,38 @@ if (!$loggedInUser || $loggedInUser->user_type != 'admin') {
   exit;
 }
 
-$imageId = $_POST['imageId'];
-$imageMgr = new ProductImageManager();
-$img = $imageMgr->get($imageId);
-// cancellare immagine
-$imageMgr->delete($imageId);
+$action = $_POST['action'];
+switch($action) {
 
-$file = ROOT_PATH . '/images/' . $img->product_id . '/' . $img->id . '.jpg';
-unlink($file);
+  case 'removeTempImages':
+    removeTempImages();
+    break;
 
-echo json_encode(['result' => 'success']);
+  default:
+    removeImage();
+    break;
+}
+
+function removeTempImages() {
+  $tmpDir = $_POST['tmpDir'];
+  $prodMgr = new ProductManager();
+  $prodMgr->DeleteTempImages($tmpDir);
+  echo json_encode(['result' => 'success']);
+}
+
+function removeImage() 
+{
+  $imageId = $_POST['imageId'];
+  $imageMgr = new ProductImageManager();
+  $img = $imageMgr->get($imageId);
+  // cancellare immagine
+  $imageMgr->delete($imageId);
+  
+  $file = ROOT_PATH . '/images/' . $img->product_id . '/' . $img->id . '.jpg';
+  unlink($file);
+  echo json_encode(['result' => 'success']);
+}
+
+
 
 ?>
