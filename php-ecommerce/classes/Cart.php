@@ -66,33 +66,109 @@
     }
 
     public function getOrdersOfUser($userId, $status){
-      $query = "CALL user_orders ($userId, '$status')"; 
-      //var_dump($query); die;
-      $result = $this->db->query($query);
+      $result = $this->db->query("
+        SELECT 
+          o.id as order_id
+          , o.created_at as created_date
+          , o.updated_at as shipped_date
+          , o.status as status
+        FROM 
+          orders o
+        WHERE
+          o.user_id = $userId
+          AND ('$status' is NULL OR '$status' = o.status)
+        ORDER BY
+          o.created_at DESC;
+      ");
       //var_dump($result); die;
       return $result;
     }
 
     public function getEmailAndName($orderId){
-      $result = $this->db->query("CALL get_order_email ($orderId)");
+      $result = $this->db->query("
+        SELECT 
+          u.email
+          , u.first_name
+        FROM 
+          orders as o
+          INNER JOIN user as u
+            ON o.user_id = u.id
+        WHERE 
+          o.id = $orderId;
+      ");
       //var_dump($result); die;
       return $result[0];
     }
 
     public function createOrderFromCart($cartId, $userId){
       $orderId = $this->create(new Order(0, $userId, 'pending'));
-      $this->db->query("CALL cart_to_order ($cartId, $orderId)");
+      $this->db->query("
+        INSERT INTO order_item (order_id, product_id, quantity)
+        SELECT 
+          $orderId
+          , ci.product_id
+          , ci.quantity
+        FROM 
+          cart c
+          INNER JOIN cart_item ci
+            ON c.id = ci.cart_id
+        WHERE
+          c.id = $cartId;
+      ");
+        
+      $this->db->query("
+        DELETE cart, cart_item
+          FROM cart
+          INNER JOIN cart_item
+          ON cart.id = cart_item.cart_id
+        WHERE
+          cart.id = $cartId;
+      ");
       return $orderId;
     }
 
     public function getOrderTotal($orderId) {
-      $result = $this->db->query("CALL order_total ($orderId)");
+      $result = $this->db->query("
+        SELECT 
+          o.id as order_id
+          , o.user_id as user_id
+          , SUM(ifnull(oi.quantity, 0)) as num_products
+          , SUM(ifnull(oi.quantity, 0) * ifnull(p.price, 0)) as total
+        FROM 
+          orders as o
+          INNER JOIN order_item as oi
+            ON o.id = oi.order_id
+          INNER JOIN product as p
+            ON oi.product_id = p.id
+        WHERE
+        $orderId = o.id;
+      ");
       //var_dump($result); die;
       return $result;
     }
 
     public function getOrderItems($orderId){
-      $result = $this->db->query("CALL order_items ($orderId)");
+      $result = $this->db->query("
+        SELECT 
+          o.id as order_id
+          , o.status as order_status
+          , oi.id as order_item_id
+          , p.name as product_name
+          , p.id as product_id
+          , p.description as product_description
+          , ifnull(oi.quantity, 0) as quantity
+          , ifnull(p.price, 0) as single_price
+          , ifnull(oi.quantity,0) * ifnull(p.price, 0) as total_price
+        FROM
+          orders as o
+          INNER JOIN order_item as oi
+            ON o.id = oi.order_id
+          INNER JOIN product as p
+            ON p.id = oi.product_id
+        WHERE
+          ifnull($orderId, 0) = 0
+          OR $orderId = o.id;
+      ");
       //var_dump($result); die;
       return $result;
     }
@@ -104,7 +180,23 @@
     }
     
     public function getAllOrders($status){
-      $result = $this->db->query("CALL all_orders ('$status')");
+      $result = $this->db->query("
+        SELECT 
+          o.id as order_id
+          , o.created_at as created_date
+          , o.updated_at as shipped_date
+          , o.status as status
+          , o.user_id as user_id
+          , u.email as user_descr
+        FROM 
+          orders o
+          INNER JOIN user u
+            ON o.user_id = u.id
+        WHERE
+          ('$status' is NULL OR '$status' = o.status)
+        ORDER BY
+          o.created_at DESC;
+      ");
       //var_dump($result); die;
       return $result;
     }
@@ -162,13 +254,13 @@
       return $item_id;
     }
 
-    // private function clearCart($cartId){
-    //   if($this->userId) {
-    //     $this->db->query('DELETE cart, cart_item FROM cart INNER JOIN cart_item ON cart.id = cart_item.cart_id WHERE cart.user_id = ' . $this->userId . ' AND cart.id NOT IN ('.$cartId.')');
-    //   } else if ($this->clientIp) {
-    //     $this->db->query("DELETE cart, cart_item FROM cart INNER JOIN cart_item ON cart.id = cart_item.cart_id WHERE cart.client_id = '" . $this->clientIp . "' AND cart.id NOT IN ('.$cartId.')");
-    //   }
-    // }
+    private function clearCart($cartId){
+      if($this->userId) {
+        $this->db->query("DELETE cart, cart_item FROM cart INNER JOIN cart_item ON cart.id = cart_item.cart_id WHERE cart.user_id = ' . $this->userId . ' AND cart.id NOT IN ('.$cartId.')");
+      } else if ($this->clientIp) {
+        $this->db->query("DELETE cart, cart_item FROM cart INNER JOIN cart_item ON cart.id = cart_item.cart_id WHERE cart.client_id = '" . $this->clientIp . "' AND cart.id NOT IN ('.$cartId.')");
+      }
+    }
 
     public function isEmptyCart($cartId){
       $results = $this->db->query("SELECT 1 FROM cart_item WHERE cart_id = '$cartId'"); 
@@ -239,11 +331,6 @@
 
 
     public function addToCart($productId, $cartId) {
-      // $this->clearCart($cartId);
-      
-      // if(!$cartId) {
-      //   $cartId = $this->createCart();
-      // }
 
       $quantityInCart = $this->quantityInCart($productId, $cartId);
 
@@ -289,11 +376,49 @@
     }
 
     public function getCartTotal($cartId) {
-      return $this->db->query("CALL cart_total ($cartId)");
+      return $this->db->query(" 
+      SELECT 
+        c.id as cart_id
+        , c.user_id as user_id
+        , SUM(ifnull(ci.quantity, 0)) as num_products
+        , sum(ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
+            CAST((`price` - (`price`*`sconto`)/100) AS DECIMAL(8,2)) 
+            ,ifnull(`price`, 0))) as total
+      FROM 
+        cart as c
+        INNER JOIN cart_item as ci
+          ON c.id = ci.cart_id
+        INNER JOIN product as p
+          ON ci.product_id = p.id
+      WHERE
+        $cartId = c.id;");
     }
 
     public function getCartItems($cartId){
-      return $this->db->query("CALL cart_items ($cartId)");
+      return $this->db->query("
+      SELECT 
+        c.id as cart_id
+        , ci.id as cart_item_id
+        , p.name as product_name
+        , p.id as product_id
+        , p.description as product_description
+        , ifnull(ci.quantity, 0) as quantity
+        , IF(p.`sconto`>0 AND p.`data_inizio_sconto` <= DATE(NOW()) AND p.`data_fine_sconto` >= DATE(NOW()),
+            CAST((p.`price` -(p.`price`*p.`sconto`)/100) AS DECIMAL(8,2)) 
+            ,ifnull(p.`price`, 0))AS single_price
+        , ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
+            CAST((`price` -(`price`*`sconto`)/100) AS DECIMAL(8,2)) 
+            ,ifnull(`price`, 0)) as total_price
+      FROM
+        cart as c
+        INNER JOIN cart_item as ci
+          ON c.id = ci.cart_id
+        INNER JOIN product as p
+          ON p.id = ci.product_id
+      WHERE
+        ifnull($cartId, 0) = 0
+        OR $cartId = c.id;
+      ");
     }
 
 

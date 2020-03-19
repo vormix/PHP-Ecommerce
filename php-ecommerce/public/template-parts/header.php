@@ -18,7 +18,7 @@ global $loggedInUser;
   <title><?php echo SITE_NAME; ?></title>
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/bootstrap.css">
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/style.css">
-  <!-- <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
   <script src="<?php echo ROOT_URL; ?>assets/js/jquery.js"></script>
 </head>
