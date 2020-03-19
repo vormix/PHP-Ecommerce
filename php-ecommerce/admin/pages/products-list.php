@@ -4,6 +4,11 @@ if (! defined('ROOT_URL')) {
   die;
 }
 
+$cm = new CartManager();
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+  $cm->ResetExpiredCarts();
+}
+
 global $alertMsg;
 $mgr = new ProductManager();
 

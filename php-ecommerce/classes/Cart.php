@@ -254,11 +254,21 @@
       return $item_id;
     }
 
-    private function clearCart($cartId){
+    public function clearCart($cartId){
       if($this->userId) {
-        $this->db->query("DELETE cart, cart_item FROM cart INNER JOIN cart_item ON cart.id = cart_item.cart_id WHERE cart.user_id = ' . $this->userId . ' AND cart.id NOT IN ('.$cartId.')");
+        $this->db->query("
+          DELETE cart, cart_item 
+          FROM cart 
+          INNER JOIN cart_item ON cart.id = cart_item.cart_id 
+          WHERE cart.user_id = '$this->userId' AND cart.id NOT IN ('$cartId');
+        ");
       } else if ($this->clientIp) {
-        $this->db->query("DELETE cart, cart_item FROM cart INNER JOIN cart_item ON cart.id = cart_item.cart_id WHERE cart.client_id = '" . $this->clientIp . "' AND cart.id NOT IN ('.$cartId.')");
+        $this->db->query(
+          "DELETE cart, cart_item 
+          FROM cart 
+          INNER JOIN cart_item ON cart.id = cart_item.cart_id 
+          WHERE cart.client_id = '$this->clientIp' AND cart.id NOT IN ('$cartId');
+        ");
       }
     }
 
@@ -339,6 +349,7 @@
       } else {
         $this->createItem($productId, $cartId);
       }
+      $this->_updateCartLastInteraction($cartId);
     }
 
     public function removeFromCart($productId, $cartId) {
@@ -350,6 +361,7 @@
       } else {
         $this->removeItem($productId, $cartId);
       }
+      $this->_updateCartLastInteraction($cartId);
     }
 
     public function getCurrentCartId(){
@@ -395,32 +407,76 @@
     }
 
     public function getCartItems($cartId){
-      return $this->db->query("
-      SELECT 
-        c.id as cart_id
-        , ci.id as cart_item_id
-        , p.name as product_name
-        , p.id as product_id
-        , p.description as product_description
-        , ifnull(ci.quantity, 0) as quantity
-        , IF(p.`sconto`>0 AND p.`data_inizio_sconto` <= DATE(NOW()) AND p.`data_fine_sconto` >= DATE(NOW()),
-            CAST((p.`price` -(p.`price`*p.`sconto`)/100) AS DECIMAL(8,2)) 
-            ,ifnull(p.`price`, 0))AS single_price
-        , ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
-            CAST((`price` -(`price`*`sconto`)/100) AS DECIMAL(8,2)) 
-            ,ifnull(`price`, 0)) as total_price
-        , ifnull(p.qta, 0) as available_quantity
-      FROM
-        cart as c
-        INNER JOIN cart_item as ci
-          ON c.id = ci.cart_id
-        INNER JOIN product as p
-          ON p.id = ci.product_id
-      WHERE
-        ifnull($cartId, 0) = 0
-        OR $cartId = c.id;
+      return $this->_getCartItems($cartId);
+    }
+
+    public function ResetExpiredCarts() {
+      $expiredCarts = $this->db->query("
+        SELECT id
+        FROM cart
+        WHERE TIMESTAMPDIFF(MINUTE, last_interaction, NOW()) > 30;
+      ");
+      if (count($expiredCarts) == 0 ) return;
+      
+      foreach ($expiredCarts as $cart) { 
+        $this->_clearCart($cart['id']);
+      }
+    }
+
+    // Privare Methods
+
+    private function _updateCartLastInteraction($cartId) {
+      $this->db->query("
+        UPDATE cart
+        SET last_interaction = NOW()
+        WHERE id = $cartId;
       ");
     }
 
+    private function _clearCart($cartId){
+       
+      $cartItems = $this->_getCartItems($cartId);
+      if (count($cartItems) == 0) return;
+     
+      $pm = new ProductManager();
+      foreach ($cartItems as $item) {
+        $pm->AddQuantity($item['product_id'], $item['quantity']);
+      }
+
+      $this->db->query("
+        DELETE cart, cart_item 
+        FROM cart 
+        INNER JOIN cart_item ON cart.id = cart_item.cart_id 
+        WHERE cart.id = $cartId;
+      ");
+    }
+
+    private function _getCartItems($cartId) {
+      return $this->db->query("
+        SELECT 
+          c.id as cart_id
+          , ci.id as cart_item_id
+          , p.name as product_name
+          , p.id as product_id
+          , p.description as product_description
+          , ifnull(ci.quantity, 0) as quantity
+          , IF(p.`sconto`>0 AND p.`data_inizio_sconto` <= DATE(NOW()) AND p.`data_fine_sconto` >= DATE(NOW()),
+              CAST((p.`price` -(p.`price`*p.`sconto`)/100) AS DECIMAL(8,2)) 
+              ,ifnull(p.`price`, 0))AS single_price
+          , ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
+              CAST((`price` -(`price`*`sconto`)/100) AS DECIMAL(8,2)) 
+              ,ifnull(`price`, 0)) as total_price
+          , ifnull(p.qta, 0) as available_quantity
+        FROM
+          cart as c
+          INNER JOIN cart_item as ci
+            ON c.id = ci.cart_id
+          INNER JOIN product as p
+            ON p.id = ci.product_id
+        WHERE
+          ifnull($cartId, 0) = 0
+          OR $cartId = c.id;
+      ");
+    }
 
   }

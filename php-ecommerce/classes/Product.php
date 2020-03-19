@@ -168,6 +168,16 @@ class ProductManager extends DBManager {
     $this->_deleteImagesFromFileSystem($tmpDir);
   }
 
+  public function AddQuantity($productId, $quantity){
+    $query = "
+      UPDATE product
+      SET qta = qta + $quantity
+      WHERE id = $productId;
+    ";
+    
+    $this->db->query($query);
+  }
+
   // Private Methods
   private function _deleteImagesFromFileSystem($productId){
     $imgMgr = new ProductImageManager();
