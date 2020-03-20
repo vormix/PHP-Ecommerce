@@ -36,7 +36,7 @@
       <th class="big-screen">#</th>
       <th>Num.Ordine</th>
       <th>Data Pagamento</th>
-      <th>Azioni</th>
+      <th>Link</th>
     </tr>
   <?php foreach ($payedOrders as $order) : $count++; ?>
   
@@ -63,7 +63,7 @@
       <th class="big-screen">#</th>
       <th>Num.Ordine</th>
       <th>Data Invio</th>
-      <th>Azioni</th>
+      <th>Link</th>
     </tr>
   <?php foreach ($pendingOrders as $order) : $count++; ?>
   
@@ -89,7 +89,7 @@
       <th class="big-screen">#</th>
       <th>Num.Ordine</th>
       <th>Data Invio</th>
-      <th>Azioni</th>
+      <th>Link</th>
     </tr>
   <?php foreach ($canceledOrders as $order) : $count++; ?>
   
@@ -115,7 +115,7 @@
       <th>Num.Ordine</th>
       <th>Data Invio</th>
       <th class="big-screen">Data Spedizione</th>
-      <th>Azioni</th>
+      <th>Link</th>
     </tr>
   <?php foreach ($shippedOrders as $order) : $count++; ?>
     <tr class="text-success">

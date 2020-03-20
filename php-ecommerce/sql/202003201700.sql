@@ -1,0 +1,1 @@
+ALTER TABLE orders ADD is_restored BIT NULL;

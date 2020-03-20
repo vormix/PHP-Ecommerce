@@ -55,7 +55,7 @@
   class OrderManager extends DBManager {
     public function __construct(){
       parent::__construct();
-      $this->columns = array( 'id', 'user_id', 'status' );
+      $this->columns = array( 'id', 'user_id', 'status', 'is_restored' );
       $this->tableName = 'orders';
     }
 
@@ -188,6 +188,7 @@
           , o.status as status
           , o.user_id as user_id
           , u.email as user_descr
+          , o.is_restored as is_restored
         FROM 
           orders o
           INNER JOIN user u
@@ -223,6 +224,29 @@
         WHERE
           user_id = $userId
           AND payment_code = '$paymentCode';
+      ");
+    }
+
+    public function RestoreOrderQuantity($orderId){
+      $this->db->query("
+        UPDATE 
+          orders o 
+          INNER JOIN order_item oi 
+            ON o.id = oi.order_id 
+          INNER JOIN product p 
+            ON p.id = oi.product_id 
+        SET 
+          p.qta = (p.qta + oi.quantity) 
+        WHERE 
+          o.id = $orderId
+          AND o.status = 'canceled' 
+          AND IFNULL(o.is_restored, 0) = 0;
+      ");
+
+      $this->db->query("
+        UPDATE orders
+        SET is_restored = 1
+        WHERE id = $orderId;
       ");
     }
 

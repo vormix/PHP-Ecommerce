@@ -25,7 +25,7 @@
     exit;
   }
 
-  if ($status == 'payed' AND isset($_POST['ship_order'])){
+if ($status == 'payed' AND (isset($_POST['ship_order']) OR isset($_GET['ship_order']))){
     //$orderId = esc($_POST['order_id']);
     
     $status = 'shipped';
@@ -43,8 +43,21 @@
     mail($to,$subject,$txt,$headers);
 
     $alertMsg = 'order_shipped';
-  }
-  $count = 0;
+}
+
+else if ($status == 'canceled' AND (isset($_POST['restore_order']) OR isset($_GET['restore_order']))) {
+
+  $orderMgr->RestoreOrderQuantity($orderId);
+  $alertMsg = 'order_quantity_resored';
+}
+
+$isRestored = false;
+if ($status == 'canceled') {
+  $o = $orderMgr->get($orderId);
+  $isRestored = $o->is_restored;
+}
+
+$count = 0;
 ?>
 
 <a href="<?php echo ROOT_URL . 'admin?page=orders-list'; ?>" class="back underline">&laquo; Lista Ordini</a>
@@ -92,6 +105,12 @@
       <hr>
       <form method="post" class="inline right">
         <input onclick="return confirm('Confermi spedizione ordine n. #<?php echo esc_html($orderId); ?> ?');" name="ship_order" type="submit" class="btn btn-primary m-0" value="Spedisci Ordine">
+      </form>
+      <?php endif; ?>
+      <?php if ($status == 'canceled' && !$isRestored ) : ?>
+      <hr>
+      <form method="post" class="inline right">
+        <input onclick="return confirm('Confermi ripristino prodotti ordine n. #<?php echo esc_html($orderId); ?> ?');" name="restore_order" type="submit" class="btn btn-danger m-0" value="Ripristina prodotti">
       </form>
       <?php endif; ?>
     </th>

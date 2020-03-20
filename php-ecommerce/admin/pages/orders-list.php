@@ -39,6 +39,7 @@
       <th class="big-screen">Num.Ordine</th>
       <th>Data Pagamento</th>
       <th>Cliente</th>
+      <th>Link</th>
       <th>Azioni</th>
     </tr>
   <?php foreach ($payedOrders as $order) : $count++; ?>
@@ -49,7 +50,12 @@
       <td><?php echo esc_html($order['created_date']); ?></td>
       <td><?php echo esc_html($order['user_descr']); ?></td>
       <td>
-        <a class="btn btn-primary btn-sm" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Lavora &raquo;</a>
+        <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td>  
+        <form method="post" action="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>&ship_order=1" class="inline right">
+          <input onclick="return confirm('Confermi spedizione ordine n. #<?php echo esc_html($order['order_id']); ?> ?');" name="ship_order" type="submit" class="btn btn-sm btn-primary m-0" value="Spedisci &raquo;">
+        </form>
       </td>
     </tr>
   <?php endforeach; $count=0; ?>
@@ -69,7 +75,7 @@
       <th class="big-screen">Data Invio</th>
       <th>Data Spedizione</th>
       <th>Cliente</th>
-      <th>Azioni</th>
+      <th>Link</th>
     </tr>
   <?php foreach ($shippedOrders as $order) : $count++; ?>
     <tr>
@@ -98,7 +104,7 @@
       <th class="big-screen">Num.Ordine</th>
       <th>Data Invio</th>
       <th>Cliente</th>
-      <th>Azioni</th>
+      <th>Link</th>
     </tr>
   <?php foreach ($pendingOrders as $order) : $count++; ?>
   
@@ -108,7 +114,7 @@
       <td><?php echo esc_html($order['created_date']); ?></td>
       <td><?php echo esc_html($order['user_descr']); ?></td>
       <td>
-      <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+        <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
       </td>
     </tr>
   <?php endforeach; $count=0; ?>
@@ -127,6 +133,7 @@
       <th class="big-screen">Num.Ordine</th>
       <th>Data Invio</th>
       <th>Cliente</th>
+      <th>Link</th>
       <th>Azioni</th>
     </tr>
   <?php foreach ($canceledOrders as $order) : $count++; ?>
@@ -137,7 +144,16 @@
       <td><?php echo esc_html($order['created_date']); ?></td>
       <td><?php echo esc_html($order['user_descr']); ?></td>
       <td>
-      <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+        <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td> 
+        <?php if (!$order['is_restored']) :  ?>
+        <form method="POST" action="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>&restore_order=1" class="inline right">
+          <input onclick="return confirm('Confermi ripristino prodotti ordine n. #<?php echo esc_html($order['order_id']); ?> ?');" name="restore_order" type="submit" class="btn btn-sm btn-danger m-0" value="Ripristina &raquo;">
+        </form>
+        <?php else: ?>
+          Ripristinato
+        <?php endif; ?>
       </td>
     </tr>
   <?php endforeach; $count=0; ?>

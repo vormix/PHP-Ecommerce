@@ -131,6 +131,19 @@ if ($alertMsg != '') {
       $msgHeading = 'ERRORE';
       $msgBody = "L'ordine non contiene alcun elemento";
       break;
+
+    case 'expired_cart':
+      $cssClass = 'alert-warning';
+      $msgHeading = 'Attenzione';
+      $msgBody = 'Essendo trascorsi oltre 30 minuti di inattività, il carrello è stato svuotato.';
+      break;
+
+    case 'order_quantity_resored':
+        $cssClass = 'alert-success';
+        $msgHeading = 'OK';
+        $msgBody = 'Quantità ordine ripristinata in stock.';
+        break;
+
   }
 
 }
