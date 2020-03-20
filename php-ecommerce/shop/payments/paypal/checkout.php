@@ -63,14 +63,11 @@ foreach($cartItems as $item) {
   array_push($items, $item);
 }
 
-var_dump($items);
-
 $totPrice = $cartTotal['total'];
 $itemList = new ItemList();
 $itemList->setItems($items);
 
 $total = $totPrice + $shipping;
-var_dump($totPrice);
 
 $payer = new Payer();
 $payer->setPaymentMethod('paypal');
@@ -112,7 +109,7 @@ try {
 
 //var_dump($result); die;
 
-echo $approvalUrl = $payment->getApprovalLink();
+$approvalUrl = $payment->getApprovalLink();
 
 header("Location: {$approvalUrl}");
 
