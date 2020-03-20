@@ -2,3 +2,4 @@ php-ecommerce/inc/config.php
 php-ecommerce/images/*
 !php-ecommerce/images/noimage.jpg
 .vscode
+php-ecommerce/vendor

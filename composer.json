@@ -1,0 +1,8 @@
+{
+    "config": {
+        "vendor-dir": "./php-ecommerce/vendor/"
+    },
+    "require": {
+        "paypal/rest-api-sdk-php": "^1.14"
+    }
+}

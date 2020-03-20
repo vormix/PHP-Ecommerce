@@ -53,10 +53,25 @@
       <td><?php echo esc_html($item['total_price']); ?> €</td>
     </tr>
   <?php endforeach; $count=0; ?>
+  <?php
+  $statusLbl = [
+    'pending'   => 'In attesa',
+    'payed'     => 'Pagato',
+    'canceled'  => 'Annullato',
+    'shipped'   => 'Spedito'
+  ];
+
+  $cssClass = [
+    'pending'   => 'secondary',
+    'payed'     => 'primary',
+    'canceled'  => 'danger',
+    'shipped'   => 'success'
+  ];
+  ?>
   <tr> 
     <th colspan="100%">
       <h4 class="inline">Totale <?php echo $orderTotal['total']; ?> €</h4>
-      <h4 class="inline right"><span class="badge badge-secondary badge-pill">Ordine <?php echo $status == 'pending' ? 'In Lavorazione' : 'Spedito'; ?></span></h4>
+      <h4 class="inline right"><span class="badge badge-<?php echo $cssClass[$status] ?> badge-pill">Ordine <?php echo $statusLbl[$status] ?></span></h4>
     </th>
   </tr>
 </table>

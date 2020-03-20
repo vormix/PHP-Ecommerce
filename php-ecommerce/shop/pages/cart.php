@@ -81,7 +81,7 @@
       global $loggedInUser;
       ?>
       <?php if ($loggedInUser) : ?>
-        <a onclick="return confirm('Confermi invio ordine?');" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop?page=checkout' ?>">Invia Ordine</a>
+        <a onclick="return confirm('Confermi invio ordine?');" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
       <?php else : ?>
         <a class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'auth?page=register' ?>">Registrati per effettuare ordine</a>
       <?php endif ; ?>

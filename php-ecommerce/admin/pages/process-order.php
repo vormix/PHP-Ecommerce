@@ -25,7 +25,7 @@
     exit;
   }
 
-  if ($status == 'pending' AND isset($_POST['ship_order'])){
+  if ($status == 'payed' AND isset($_POST['ship_order'])){
     //$orderId = esc($_POST['order_id']);
     
     $status = 'shipped';
@@ -69,15 +69,30 @@
       <td><?php echo esc_html($item['total_price']); ?> €</td>
     </tr>
   <?php endforeach; $count=0; ?>
+  <?php
+  $statusLbl = [
+    'pending'   => 'In attesa',
+    'payed'     => 'Pagato',
+    'canceled'  => 'Annullato',
+    'shipped'   => 'Spedito'
+  ];
+
+  $cssClass = [
+    'pending'   => 'secondary',
+    'payed'     => 'primary',
+    'canceled'  => 'danger',
+    'shipped'   => 'success'
+  ];
+  ?>
   <tr> 
     <th colspan="100%">
       <h4 class="inline">Totale <?php echo $orderTotal['total']; ?> €</h4>
-      <?php if ($status == 'pending') : ?>
+      <h4 class="inline right"><span class="badge badge-<?php echo $cssClass[$status] ?> badge-pill">Ordine <?php echo $statusLbl[$status] ?></span></h4>
+      <?php if ($status == 'payed') : ?>
+      <hr>
       <form method="post" class="inline right">
         <input onclick="return confirm('Confermi spedizione ordine n. #<?php echo esc_html($orderId); ?> ?');" name="ship_order" type="submit" class="btn btn-primary m-0" value="Spedisci Ordine">
       </form>
-      <?php else : ?>
-        <h4 class="inline right"><span class="badge badge-secondary badge-pill">Ordine spedito</span></h4>
       <?php endif; ?>
     </th>
   </tr>

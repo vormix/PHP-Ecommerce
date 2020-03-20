@@ -1,0 +1,1 @@
+ALTER TABLE orders ADD payment_code VARCHAR(255) NULL, ADD payment_status VARCHAR(255) NULL;

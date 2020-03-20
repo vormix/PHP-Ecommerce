@@ -8,3 +8,6 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'php-ecommerce');
+
+define('PAYPAL_CLIENT_ID', 'your_paypal_client_id');
+define('PAYPAL_CLIENT_SECRET', 'your_paypal_client_secret');

@@ -201,6 +201,31 @@
       return $result;
     }
 
+    public function SavePaymentDetails($orderId, $paymentCode, $paymentStatus){
+      $status = $paymentStatus == 'approved' ? 'payed' : 'canceled';
+
+      $this->db->query("
+        UPDATE orders
+        SET 
+          payment_code = '$paymentCode'
+          , payment_status = '$paymentStatus'
+          , status = '$status'
+          , updated_at = NOW()
+        WHERE
+          id = $orderId;
+      ");
+    }
+
+    public function GetByUserIdAndPaymentCode($userId, $paymentCode) {
+      return $this->db->query("
+        SELECT *
+        FROM orders
+        WHERE
+          user_id = $userId
+          AND payment_code = '$paymentCode';
+      ");
+    }
+
   }
 
   
@@ -421,6 +446,7 @@
       foreach ($expiredCarts as $cart) { 
         $this->_clearCart($cart['id']);
       }
+      return $expiredCarts;
     }
 
     // Privare Methods
