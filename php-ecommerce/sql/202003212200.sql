@@ -1,0 +1,1 @@
+ALTER TABLE product_images ADD title VARCHAR(255) NULL, ADD alt VARCHAR(255) NULL, ADD order_number int(11) NULL;

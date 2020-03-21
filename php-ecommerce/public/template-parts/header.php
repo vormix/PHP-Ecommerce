@@ -19,8 +19,14 @@ global $loggedInUser;
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/bootstrap.css">
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/style.css">
   <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
+  
   <script src="<?php echo ROOT_URL; ?>assets/js/jquery.js"></script>
+  <script src="<?php echo ROOT_URL; ?>assets/js/popper.js"></script>
+  <script src="<?php echo ROOT_URL; ?>assets/js/bootstrap.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-bs4.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-bs4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
 
   <script>
   var rootUrl = '<?php echo ROOT_URL ?>';

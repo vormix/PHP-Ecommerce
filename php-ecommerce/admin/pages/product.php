@@ -186,8 +186,9 @@ if (isset($_POST['update'])) {
       <div class="row product-images">
         <?php foreach ($product->images as $image) : ?>
         <div class="product-image col-md-3 col-sm-4 col-6">
+          <span data-id="<?php echo $image->id ?>" title="Modifica" class="edit-img badge badge-info p-2 rounded-circle"><i class="fas fa-edit"></i></span>
           <span data-id="<?php echo $image->id ?>" title="Elimina" class="delete-img badge badge-danger p-2 rounded-circle">&times;</span>
-          <img data-id="<?php echo $image->id ?>" class="img-thumbnail" src="<?php echo ROOT_URL . '/images/' . $product->id . '/' . $image->id . '.' . $image->image_extension ?>" />
+          <img title="<?php echo $image->title ?>" data-order="<?php echo $image->order_number ?>" alt="<?php echo $image->alt ?>" data-id="<?php echo $image->id ?>" class="img-thumbnail" src="<?php echo ROOT_URL . '/images/' . $product->id . '/' . $image->id . '.' . $image->image_extension ?>" />
         </div>
         <?php endforeach ?>
       </div>
@@ -207,6 +208,11 @@ $document.ready(function() {
   $('#img').on('change', uploadFiles );
 
   $document.on('click', '.delete-img', e => deleteFile(e));
+  $document.on('click', '.edit-img', e => openImageDetailsModal(e));
+  $document.on('submit', '.imgDetails', e => saveImgDetails(e));
+
+  
+
   window.addEventListener('beforeunload', removeTempImages, false);
 });
 
@@ -215,6 +221,67 @@ function removeTempImages(){
     if (tmpDir != null && tmpDir != "") {
       $.post('../api/admin/delete.php', {action: 'removeTempImages', tmpDir: tmpDir});
     }
+}
+
+function saveImgDetails(e) {
+
+  e.preventDefault();
+  var $target = $(e.target);
+
+  var id = $target.attr('data-id');
+  var title = $target.find('#imgtitle').val();
+  var alt = $target.find('#imgalt').val();
+  var order = $target.find('#imgorder').val();
+
+  $('.product-image img[data-id="'+id+'"]')
+    .attr('title', title)
+    .attr('alt', alt)
+    .attr('data-order', order);
+
+  var postData = {
+    operation: 'img-details',
+    id: id,
+    title: title,
+    alt: alt,
+    order:order
+  };
+  
+  $.post('../api/admin/upload.php', postData, response => {
+    console.log(response);
+  });
+
+}
+
+function openImageDetailsModal(e){
+  var $target = $(e.target);
+  var $img = $target.closest('.edit-img').siblings('img').first();
+
+  var imageId = $img.attr('data-id');
+
+  var imageTitle = $img.attr('title');
+  imageTitle = imageTitle == null ? '' : imageTitle;
+
+  var imageAlt = $img.attr('alt');
+  imageAlt = imageAlt == null ? '' : imageAlt;
+
+  var imageOrder = $img.attr('data-order');
+  imageOrder = imageOrder == null ? '' : imageOrder;
+
+
+  bootbox.confirm(`
+    <form data-id="${imageId}" class='imgDetails' action=''>
+      <label>Title:</label> 
+      <input  class="form-control" type='text' name='imgtitle' id="imgtitle" value="${imageTitle}" /><br/>
+      <label>Alt:</label> 
+      <input  class="form-control" type='text'  name='imgalt' id="imgalt" value="${imageAlt}"  />
+      <label>Order:</label> 
+      <input  class="form-control" type='text'  name='imgorder' id="imgorder" value="${imageOrder}"  />
+    </form>`, 
+    function(result) {
+      if(result)
+          $('.imgDetails').submit();
+    }
+  );
 }
 
 function deleteFile(e) {
@@ -271,8 +338,9 @@ function uploadFiles() {
       $.each(images, (i, image) => {
         htmlStr += `
         <div class="product-image col-md-3 col-sm-4 col-6">
+          <span data-id="${image.id}" title="Modifica" class="edit-img badge badge-info p-2 rounded-circle"><i class="fas fa-edit"></i></span>
           <span data-id="${image.id}" title="Elimina" class="delete-img badge badge-danger p-2 rounded-circle">&times;</span>
-          <img data-id="${image.id}" class="img-thumbnail" src="<?php echo ROOT_URL ?>/images/${image.product_id}/${image.id}.jpg" />
+          <img title="${image.title}" data-order="${image.order}" alt="${image.alt}"  data-id="${image.id}" class="img-thumbnail" src="<?php echo ROOT_URL ?>/images/${image.product_id}/${image.id}.jpg" />
         </div>
         `;
       });

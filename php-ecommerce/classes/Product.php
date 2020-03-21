@@ -4,10 +4,19 @@ class ProductImage {
   public $id;
   public $product_id;
   public $image_extension;
-  public function __construct($id, $product_id, $image_extension) {
+
+  public $title;
+  public $alt;
+  public $order;
+
+  public function __construct($id, $product_id, $image_extension, $title = NULL, $alt = NULL, $order_number = 0) {
     $this->id = (int)$id;
     $this->product_id = (int)$product_id;
     $this->image_extension = $image_extension;
+    $this->title = $title;
+    $this->alt = $alt;
+    $this->order_number = $order_number;
+
   }
 }
 
@@ -15,7 +24,7 @@ class ProductImageManager extends DBManager {
 
   public function __construct(){
     parent::__construct();
-    $this->columns = array( 'id', 'product_id', 'image_extension');
+    $this->columns = array( 'id', 'product_id', 'image_extension', 'title', 'alt', 'order_number');
     $this->tableName = 'product_images';
   }
 

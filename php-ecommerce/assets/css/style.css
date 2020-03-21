@@ -108,6 +108,12 @@ ol.carousel-indicators li {
   bottom: 10px;
   right: 30px;
 }
+.edit-img {
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 60px;
+}
 
 .product-image {position: relative;}
 
