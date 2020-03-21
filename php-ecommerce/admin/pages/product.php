@@ -4,6 +4,9 @@ if (! defined('ROOT_URL')) {
   die;
 }
 
+$catMgr = new CategoryManager();
+$categories = $catMgr->GetCategories();
+
 $mgr = new ProductManager();
 $product = Product::CreateEmpty();
 $product->images = [];
@@ -101,8 +104,11 @@ if (isset($_POST['update'])) {
     <label for="category_id">Categoria</label>
     <select name="category_id" id="category_id" type="text" class="form-control" value="<?php echo esc_html($product->category_id); ?>">
       <option value="0"> - Scegli una categoria - </option>
-      <option <?php if ($product->category_id == '1' ) echo 'selected' ; ?> value="1">Categoria 1</option>
-      <option <?php if ($product->category_id == '2' ) echo 'selected' ; ?> value="2">Categoria 2</option>
+      <?php if (count($categories) > 0) : ?>
+        <?php foreach ($categories as $category) : ?>
+          <option <?php if ($product->category_id == $category->id ) echo 'selected' ; ?> value="<?php echo esc_html($category->id); ?>"><?php echo esc_html($category->name); ?></option>
+        <?php endforeach ; ?>
+      <?php endif ; ?>
     </select>
   </div>
   <div class="form-group">
