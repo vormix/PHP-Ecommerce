@@ -110,3 +110,27 @@ ol.carousel-indicators li {
 }
 
 .product-image {position: relative;}
+
+.live-search {
+  position: absolute;
+    top: 60px;
+    z-index: 100;
+    width: 200px;
+}
+
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 2;
+}
+
+#suggestions {
+  z-index: 1000;
+  position: relative;
+}

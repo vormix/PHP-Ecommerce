@@ -182,6 +182,29 @@ class ProductManager extends DBManager {
     $this->db->query($query);
   }
 
+  public function SearchProducts($search) {
+    return $this->db->query("
+      SELECT
+        p.id as id
+        , p.name as name
+        , c.name as category
+        , IF(p.sconto > 0 AND p.data_inizio_sconto <= DATE(NOW()) AND p.data_fine_sconto >= DATE(NOW()),
+            CAST((p.price -(p.price * p.sconto)/100) AS DECIMAL(8,2)) 
+            ,ifnull(p.price, 0))AS price
+      FROM
+        product p
+        LEFT JOIN category c
+        ON p.category_id = c.id
+      WHERE
+        p.name like '%$search%'
+        OR
+        p.description like '%$search%'
+        OR
+        c.name like '%$search%'
+      LIMIT 5;
+    ");
+  }
+
   // Private Methods
   private function _deleteImagesFromFileSystem($productId){
     $imgMgr = new ProductImageManager();

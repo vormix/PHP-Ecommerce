@@ -21,6 +21,10 @@ global $loggedInUser;
   <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
   <script src="<?php echo ROOT_URL; ?>assets/js/jquery.js"></script>
+
+  <script>
+  var rootUrl = '<?php echo ROOT_URL ?>';
+  </script>
 </head>
 
 <body>
@@ -52,7 +56,7 @@ global $loggedInUser;
             <a class="nav-link" href="<?php echo ROOT_URL; ?>?page=contacts">Contatti</a>
           </li>
         </ul>
-
+       
         <ul class="cart-desktop navbar-nav ml-auto">
           <li class="nav-item">
             <a class="nav-link" href="<?php echo ROOT_URL; ?>shop?page=cart">
@@ -115,6 +119,18 @@ global $loggedInUser;
         </ul>
         <?php endif; ?>
 
+        <form class="form-inline mt-2 mt-md-0">
+          <input id="search" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <div class="live-search">
+            <div class="overlay"></div>
+            <div id="suggestions">
+              <div class="my-3 p-3 bg-white rounded shadow-sm results">
+                <h6 class="border-bottom border-gray pb-2 mb-0">Risultati della ricerca...</h6>            
+              </div>  
+            </div>
+          </div>
+        </form>
+    
       </div>
     </div>
   </nav>
