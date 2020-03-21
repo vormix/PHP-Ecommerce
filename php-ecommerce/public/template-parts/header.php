@@ -71,6 +71,8 @@ global $loggedInUser;
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=orders-list">Gestione Ordini</a>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=category-list">Gestione Categorie</a>
+              <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=product">Aggiungi Prodotto</a>
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=products-list">Lista Prodotti</a>
               <div class="dropdown-divider"></div>

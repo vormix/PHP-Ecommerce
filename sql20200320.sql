@@ -1,0 +1,1 @@
+CREATE TABLE php-ecommerce.category ( id INT NOT NULL AUTO_INCREMENT , name TEXT NOT NULL , PRIMARY KEY (id)) ENGINE = InnoDB;
