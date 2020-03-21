@@ -1,12 +1,13 @@
 <?php
 // Prevent from direct access
 if (! defined('ROOT_URL')) {
-    die;
-  }
+  die;
+}
 
-  $ctm = new CategoryManager();
+$ctm = new CategoryManager();
+$category = new Category(0, '');
 
-  global $alertMsg;
+global $alertMsg;
 
 $lblAction = 'Aggiungi';
 $submit = 'add';
