@@ -18,6 +18,9 @@ $page = isset($_GET["page"]) ? $_GET["page"] : 'dashboard';
 <?php include ROOT_PATH . 'public/template-parts/header.php'; ?>
 <div class="main-content container mt-5 newclass">
   <div class="row">
+    <div class="col-lg-3 big-screen">
+      <?php include ROOT_PATH . 'public/template-parts/sidebar.php'; ?>
+    </div>
     <div class="col-lg-9">
       <div class="main">
         <!-- <?php if ($page != 'dashboard' AND $page != 'process-order') : ?>
@@ -28,9 +31,6 @@ $page = isset($_GET["page"]) ? $_GET["page"] : 'dashboard';
         <?php include "pages/$page.php"; ?>
         <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
       </div>
-    </div>
-    <div class="col-lg-3 big-screen">
-      <?php include ROOT_PATH . 'public/template-parts/sidebar.php'; ?>
     </div>
   </div>
 

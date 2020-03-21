@@ -13,6 +13,10 @@
 
     $productId = trim($_POST['id']);
 
+    if (!is_numeric($productId)) {
+      die('productId must be numeric...'); // prevent sql injection
+    }
+
     $cartId = $cm->getCurrentCartId();
     //var_dump($cartId); die;
     $cm->addToCart($productId, $cartId);
@@ -21,9 +25,15 @@
     echo "<script>location.href='".ROOT_URL."shop?page=products-list&msg=$alertMsg';</script>";
     exit;
   }
+
+  $categoryId = isset($_GET['categoryId']) ? trim($_GET['categoryId']) : 0;
+  if (!is_numeric($categoryId)) {
+    die('categoryId must be numeric...'); // prevent sql injection
+  }
   
   $pm = new ProductManager();
-  $products = $pm->GetProducts();
+  $products = $pm->GetProducts($categoryId);
+  
 ?>
 
 <h1>Lista Prodotti</h1>

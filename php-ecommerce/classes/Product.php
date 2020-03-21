@@ -116,8 +116,12 @@ class ProductManager extends DBManager {
     return $product;
   }
 
-  public function GetProducts() {
-    $products = parent::getAll();
+  public function GetProducts($categoryId) {
+    if ($categoryId == 0)
+      $products = parent::getAll();
+    else {
+        $products = $this->_getProductsInCategory($categoryId);
+    }
     
    // echo $r . $secs . ' Sec';die;
     foreach($products as $product){
@@ -189,5 +193,20 @@ class ProductManager extends DBManager {
   private function _deleteImagesFromDB($productId){
     $this->db->query("DELETE FROM product_images WHERE product_id = $productId");
   }
+
+  private function _getProductsInCategory($categoryId) {
+    $productsObjArr = [];
+    $products = $this->db->query("
+      SELECT *
+      FROM product
+      WHERE  category_id = $categoryId;
+    ");
+    if ($products){
+      foreach($products as $product){
+        array_push($productsObjArr, (object) $product);
+      }
+    }
+    return $productsObjArr;
+  } 
  
  }
