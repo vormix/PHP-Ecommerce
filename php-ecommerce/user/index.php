@@ -22,14 +22,14 @@ if(isset($_GET['page'])) {
 <?php include ROOT_PATH . 'public/template-parts/header.php'; ?>
 <div class="container mt-5">
   <div class="row">
+    <div class="col-md-3 big-screen">
+      <?php include ROOT_PATH . 'public/template-parts/sidebar.php'; ?>
+    </div>
     <div class="col-md-9">
       <div class="main">
       <?php include "pages/$page.php"; ?>
       <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
       </div>
-    </div>
-    <div class="col-md-3 big-screen">
-      <?php include ROOT_PATH . 'public/template-parts/sidebar.php'; ?>
     </div>
   </div>
 

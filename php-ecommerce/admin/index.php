@@ -29,7 +29,6 @@ $page = isset($_GET["page"]) ? $_GET["page"] : 'dashboard';
         <?php endif; ?> -->
         <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
         <?php include "pages/$page.php"; ?>
-        <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
       </div>
     </div>
   </div>

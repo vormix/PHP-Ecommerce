@@ -21,9 +21,7 @@
 
   $cart_total = $cm->getCartTotal($cartId);
   $cart_items = $cm->getCartItems($cartId);
-   //var_dump($cartId);die;
-  //var_dump($cart_items); die;
-  // var_dump($cart_total);
+
 ?>
 
 <div class="col-md-12 order-md-2 mb-4">
@@ -77,11 +75,45 @@
         </li>
       </ul>
       <hr class="mb-4">
+
+      <div class="form-group">
+        <label for="paymentMethods">Metodo di Pagamento</label>
+        <select name="paymentMethods" id="paymentMethods" type="text" class="form-control" value="0">
+          <option value="0"> - Scegli una modalità di pagamento - </option>
+          <option value="card">Carta di Credito</option>
+          <option value="paypal">PayPal</option>
+        </select>
+      </div>
+
       <?php
       global $loggedInUser;
       ?>
       <?php if ($loggedInUser) : ?>
-        <a onclick="return confirm('Confermi invio ordine?');" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
+        <a  id="paypalPay" onclick="return confirm('Confermi invio ordine?');" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
+        <div id="cardPay">
+          <!-- Stripe -->
+          <div class="sr-root">
+            <div class="sr-main">
+              <form id="stripe-payment-form" class="sr-payment-form">
+                <div class="sr-combo-inputs-row form-control mb-3">
+                  <div class="sr-input sr-card-element" id="card-element"></div>
+                </div>
+                <div class="sr-field-error" id="card-errors" role="alert"></div>
+                <button class="stripe-button btn btn-primary btn-block">
+                  <div class="spinner hidden"></div>
+                  <span class="button-text">Paga con Carta di Credito</span><span class="order-amount"></span>
+                </button>
+              </form>
+              <div class="sr-result hidden">
+                <p>Pagamento Completato<br /></p>
+                <pre>
+                  <code></code>
+                </pre>
+              </div>
+            </div>
+          </div>
+          <!-- Stripe -->
+        </div>
       <?php else : ?>
         <a class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'auth?page=register' ?>">Registrati per effettuare ordine</a>
       <?php endif ; ?>
@@ -92,9 +124,30 @@
 
 </div>
 
+<!-- Stripe Payment -->
+ <!-- <link rel="stylesheet" href="<?php echo ROOT_URL ?>shop/payments/stripe/css/normalize.css" /> -->
+<!--<link rel="stylesheet" href="<?php echo ROOT_URL ?>shop/payments/stripe/css/global.css" /> -->
+<script src="https://js.stripe.com/v3/"></script>
+<script src="<?php echo ROOT_URL ?>shop/payments/stripe/js/script.js" ></script>
+<!-- / tripe Payment -->
+
 <script>
 var $document = $(document);
+
+var $paymentMethods;
+var $paypal;
+var $card;
+
 $document.ready(function(){
+
+  $paymentMethods = $('#paymentMethods');
+  $paypal = $('#paypalPay');
+  $card = $('#cardPay');
+
+  $paypal.hide();
+  $card.hide();
+
+  $document.find('#paymentMethods').on('change', enablePaymentButton);
   $document.find('.order-md-2 input:submit').on('click', e => {
     var $target = $(e.target);
     var $productButtons = $target.closest('div.cart-buttons');
@@ -119,6 +172,23 @@ $document.ready(function(){
     });
   });
 });
+
+function enablePaymentButton(e) {
+
+  switch($paymentMethods.val()) {
+    case 'paypal':
+      $paypal.show();
+      $card.hide();
+      break;
+    case 'card':
+      $card.show();
+      $paypal.hide();
+      break;
+    default:
+      $card.hide();
+      $paypal.hide();
+  }
+}
 
 function printNumOfCartItems(cart_items) {
   var $span = $('#numOfCartItems');

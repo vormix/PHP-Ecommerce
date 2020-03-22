@@ -205,7 +205,7 @@
       return $result;
     }
 
-    public function SavePaymentDetails($orderId, $paymentCode, $paymentStatus){
+    public function SavePaymentDetails($orderId, $paymentCode, $paymentStatus, $paymentMethod){
       $status = $paymentStatus == 'approved' ? 'payed' : 'canceled';
 
       $this->db->query("
@@ -214,6 +214,7 @@
           payment_code = '$paymentCode'
           , payment_status = '$paymentStatus'
           , status = '$status'
+          , payment_method = '$paymentMethod'
           , updated_at = NOW()
         WHERE
           id = $orderId;

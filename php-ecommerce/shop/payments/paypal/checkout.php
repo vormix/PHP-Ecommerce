@@ -20,26 +20,12 @@ if (!$loggedInUser) {
   exit;
 }
 
-// if (!isset($_POST['product'], $_POST['price'])) {  // dettagli di cio che hai comparato
-//   die;
-// }
-
 $cartMgr = new CartManager();
-$orderMgr = new OrderManager();
 
 $cartId = $cartMgr->getCurrentCartId();
 if ($cartMgr->isEmptyCart($cartId)){
   die('cart is empty');
 }
-
-$address = $orderMgr->getUserAddress($loggedInUser->id);
-if(!$address) { 
-  die('address_not_found');
-}
-
-// $orderId = $orderMgr->createOrderFromCart($cartId, $loggedInUser->id);
-// $orderItems = $orderMgr->getOrderItems($orderId);
-// $orderTotal = $orderMgr->getOrderTotal($orderId)[0];
 
 $cartItems = $cartMgr->getCartItems($cartId);
 $cartTotal = $cartMgr->getCartTotal($cartId)[0];
@@ -105,12 +91,8 @@ try {
   die($e);
 }
 
-// $orderMgr->SavePaymentDetails($orderId, $result->id, $result->state);
-
 //var_dump($result); die;
-
 $approvalUrl = $payment->getApprovalLink();
-
 header("Location: {$approvalUrl}");
 
 

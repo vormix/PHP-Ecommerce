@@ -27,13 +27,3 @@
   <?php endif; ?>
 </div>
 
-<div class="card mb-3" >
-  <div class="card-header bg-dark text-light">
-    Sidebar 1
-  </div>
-  <div class="card-body text-dark text-light">
-    <h5 class="card-title">Elemento sidebar 1</h5>
-    <p class="card-text">Testo di esempio.</p>
-  </div>
-</div>
-

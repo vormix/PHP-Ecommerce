@@ -47,8 +47,9 @@ $orderId = $orderMgr->createOrderFromCart($cartId, $loggedInUser->id);
 
 $paymentCode = $result->id;
 $paymentStatus = $result->state;
+$paymentMethod = 'paypal';
 
-$orderMgr->SavePaymentDetails($orderId, $paymentCode, $paymentStatus);
+$orderMgr->SavePaymentDetails($orderId, $paymentCode, $paymentStatus, $paymentMethod);
 
 if ($paymentStatus == 'approved') {
   header("Location: " . ROOT_URL . "shop?page=checkout&success=true&orderId=$orderId");
