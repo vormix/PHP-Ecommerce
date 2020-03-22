@@ -7,15 +7,14 @@ class ProductImage {
 
   public $title;
   public $alt;
-  public $order;
 
-  public function __construct($id, $product_id, $image_extension, $title = NULL, $alt = NULL, $order_number = 0) {
+  public function __construct($id, $product_id, $image_extension, $title = '', $alt = '', $order_number = 0) {
     $this->id = (int)$id;
     $this->product_id = (int)$product_id;
     $this->image_extension = $image_extension;
     $this->title = $title;
     $this->alt = $alt;
-    $this->order_number = $order_number;
+    $this->order_number = (int) $order_number;
 
   }
 }

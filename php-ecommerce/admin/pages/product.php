@@ -275,7 +275,7 @@ function openImageDetailsModal(e){
       <label>Alt:</label> 
       <input  class="form-control" type='text'  name='imgalt' id="imgalt" value="${imageAlt}"  />
       <label>Order:</label> 
-      <input  class="form-control" type='text'  name='imgorder' id="imgorder" value="${imageOrder}"  />
+      <input  class="form-control" type='number' min="0"  name='imgorder' id="imgorder" value="${imageOrder}"  />
     </form>`, 
     function(result) {
       if(result)
