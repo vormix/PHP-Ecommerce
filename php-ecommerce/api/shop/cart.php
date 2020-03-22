@@ -15,11 +15,9 @@ $product=$pm->get($product_id);
     
 if (isset($_POST['minus'])){
   $cm->removeFromCart($product_id, $cart_id);
-  $pm->increaseQuantity($product_id);
 }
 else if (isset($_POST['plus']) && $product->qta > 1){
   $cm->addToCart($product_id, $cart_id);
-  $pm->decreaseQuantity($product_id);
 }
 
 $cart_total = $cm->getCartTotal($cartId);

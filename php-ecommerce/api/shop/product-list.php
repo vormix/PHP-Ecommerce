@@ -11,7 +11,6 @@ $product=$pm->get($productId);
 
  if($product->qta > 1) {
 
-    $pm->decreaseQuantity($productId);
     $cm = new CartManager();
     $cartId = $cm->getCurrentCartId(); 
     $cm->addToCart($productId, $cartId);

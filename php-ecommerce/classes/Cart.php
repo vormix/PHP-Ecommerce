@@ -399,6 +399,8 @@
         $this->createItem($productId, $cartId);
       }
       $this->_updateCartLastInteraction($cartId);
+      $prodMgr = new ProductManager();
+      $prodMgr->decreaseQuantity($productId);
     }
 
     public function removeFromCart($productId, $cartId) {
@@ -411,6 +413,8 @@
         $this->removeItem($productId, $cartId);
       }
       $this->_updateCartLastInteraction($cartId);
+      $prodMgr = new ProductManager();
+      $prodMgr->increaseQuantity($productId);
     }
 
     public function getCurrentCartId(){
