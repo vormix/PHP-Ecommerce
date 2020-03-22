@@ -33,8 +33,10 @@
     public $id;
     public $user_id;
     public $status;
+    public $is_restored;
+    public $is_email_sent;
 
-    public function __construct($id, $user_id, $status){
+    public function __construct($id, $user_id, $status, $is_restored = 0, $is_email_sent = 0){
       $this->id = $id > 0 ? $id : 0;
       $this->user_id = $user_id;
       $this->status = $status;
@@ -55,7 +57,7 @@
   class OrderManager extends DBManager {
     public function __construct(){
       parent::__construct();
-      $this->columns = array( 'id', 'user_id', 'status', 'is_restored' );
+      $this->columns = array( 'id', 'user_id', 'status', 'is_restored', 'is_email_sent' );
       $this->tableName = 'orders';
     }
 

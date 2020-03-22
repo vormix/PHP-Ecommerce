@@ -13,14 +13,26 @@ if (!$loggedInUser) {
 global $alertMsg;
 $error = $_GET['success'] != "true";
 
+
 $cartMgr = new CartManager();
 $orderMgr = new OrderManager();
 
-$orderId = $_GET['orderId'];
+$orderId = (int) $_GET['orderId'];
+$order = $orderMgr->get($orderId);
+if (!$order || $loggedInUser->id != $order->user_id) {
+  echo "<script>location.href='".ROOT_URL."public';</script>";
+  exit;
+}
 
+if ($order->is_email_sent){
+  echo '<h1>Ordine già elaborato.</h1>';
+  echo '<p>Puoi visualizzare i dettagli oppure tornare alla home...</p>';
+  echo '<a class="back underline" href="'.ROOT_URL.'shop?page=view-order&id='.$orderId .'">Visualizza &raquo;</a><br>';
+  echo '<a class="back underline" href="'.ROOT_URL.'">&laquo; Torna alla Home</a>';
+  exit;
+}
 
 $address = $orderMgr->getUserAddress($loggedInUser->id);
-
 $orderItems = $orderMgr->getOrderItems($orderId);
 $orderTotal = $orderMgr->getOrderTotal($orderId)[0];
 
@@ -63,7 +75,10 @@ if ($error == false) {
   $txt .= $shippingAddressStr . $br;
   $txt .= $br . "Riceverà una mail quando l'ordine sarà spedito.";
 }
+
 mail($to,$subject,$txt,$headers);
+$order->is_email_sent = 1;
+$orderMgr->update($order, $orderId);
 
 $style="";
 $htmlBody = "<table class='table table-bordered' $style><tr><th $style>Prodotto</th><th $style >Prezzo Unitario</th><th $style >N. Pezzi</th><th $style >Importo</th></tr>";
