@@ -76,9 +76,9 @@ $count = 0;
   
     <tr>
       <td class="big-screen"><?php echo $count; ?></td>
-      <td class="big-screen"><?php echo esc_html($item['product_name']); ?></td>
+      <td><?php echo esc_html($item['product_name']); ?></td>
       <td><?php echo esc_html($item['quantity']); ?></td>
-      <td><?php echo esc_html($item['single_price']); ?> €</td>
+      <td class="big-screen"><?php echo esc_html($item['single_price']); ?> €</td>
       <td><?php echo esc_html($item['total_price']); ?> €</td>
     </tr>
   <?php endforeach; $count=0; ?>
