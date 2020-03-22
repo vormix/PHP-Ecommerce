@@ -1,0 +1,1 @@
+ALTER TABLE order_item ADD single_price DECIMAL(10, 2) NULL;

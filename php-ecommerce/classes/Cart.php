@@ -103,15 +103,20 @@
     public function createOrderFromCart($cartId, $userId){
       $orderId = $this->create(new Order(0, $userId, 'pending'));
       $this->db->query("
-        INSERT INTO order_item (order_id, product_id, quantity)
+        INSERT INTO order_item (order_id, product_id, quantity, single_price)
         SELECT 
           $orderId
           , ci.product_id
           , ci.quantity
+          , IF(p.sconto > 0 AND p.data_inizio_sconto <= NOW() AND p.data_fine_sconto >=  NOW(),
+              CAST((p.price - (p.price * p.sconto)/100) AS DECIMAL(8,2)) 
+              , ifnull(p.price, 0)) 
         FROM 
           cart c
           INNER JOIN cart_item ci
             ON c.id = ci.cart_id
+          LEFT JOIN product p
+            ON ci.product_id = p.id
         WHERE
           c.id = $cartId;
       ");
@@ -133,13 +138,11 @@
           o.id as order_id
           , o.user_id as user_id
           , SUM(ifnull(oi.quantity, 0)) as num_products
-          , SUM(ifnull(oi.quantity, 0) * ifnull(p.price, 0)) as total
+          , SUM(ifnull(oi.quantity, 0) * ifnull(oi.single_price, 0)) as total
         FROM 
           orders as o
           INNER JOIN order_item as oi
             ON o.id = oi.order_id
-          INNER JOIN product as p
-            ON oi.product_id = p.id
         WHERE
         $orderId = o.id;
       ");
@@ -157,8 +160,8 @@
           , p.id as product_id
           , p.description as product_description
           , ifnull(oi.quantity, 0) as quantity
-          , ifnull(p.price, 0) as single_price
-          , ifnull(oi.quantity,0) * ifnull(p.price, 0) as total_price
+          , ifnull(oi.single_price, 0) as single_price
+          , ifnull(oi.quantity, 0) * ifnull(oi.single_price, 0) as total_price
         FROM
           orders as o
           INNER JOIN order_item as oi
@@ -446,9 +449,9 @@
         c.id as cart_id
         , c.user_id as user_id
         , SUM(ifnull(ci.quantity, 0)) as num_products
-        , sum(ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
-            CAST((`price` - (`price`*`sconto`)/100) AS DECIMAL(8,2)) 
-            ,ifnull(`price`, 0))) as total
+        , sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
+            CAST((price - (price*sconto)/100) AS DECIMAL(8,2)) 
+            ,ifnull(price, 0))) as total
       FROM 
         cart as c
         INNER JOIN cart_item as ci
@@ -514,12 +517,12 @@
           , p.id as product_id
           , p.description as product_description
           , ifnull(ci.quantity, 0) as quantity
-          , IF(p.`sconto`>0 AND p.`data_inizio_sconto` <= DATE(NOW()) AND p.`data_fine_sconto` >= DATE(NOW()),
-              CAST((p.`price` -(p.`price`*p.`sconto`)/100) AS DECIMAL(8,2)) 
-              ,ifnull(p.`price`, 0))AS single_price
-          , ifnull(ci.quantity,0) * IF(p.`sconto`>0 AND `data_inizio_sconto` <= DATE(NOW()) AND `data_fine_sconto` >= DATE(NOW()),
-              CAST((`price` -(`price`*`sconto`)/100) AS DECIMAL(8,2)) 
-              ,ifnull(`price`, 0)) as total_price
+          , IF(p.sconto>0 AND p.data_inizio_sconto <= DATE(NOW()) AND p.data_fine_sconto >= DATE(NOW()),
+              CAST((p.price -(p.price*p.sconto)/100) AS DECIMAL(8,2)) 
+              ,ifnull(p.price, 0))AS single_price
+          , ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
+              CAST((price -(price*sconto)/100) AS DECIMAL(8,2)) 
+              ,ifnull(price, 0)) as total_price
           , ifnull(p.qta, 0) as available_quantity
         FROM
           cart as c
