@@ -27,6 +27,8 @@
 
   $pm = new ProductManager();
   $product = $pm->GetProductWithImages($id);
+  $discPrice = $pm->getDiscountedPrice($id);
+  $lineThrough = $discPrice ? 'text-muted line-through' : '';
  // var_dump($product); die;
   if ($product->id == 0) {
     echo "<script>location.href='".ROOT_URL."shop?page=products-list&msg=not_found';</script>";
@@ -37,7 +39,14 @@
 
 <div class="jumbotron">
   <h1 class="display-5"><?php echo esc_html($product->name); ?></h1>
-  <p class="lead">Prezzo: <?php echo esc_html($product->price); ?> €</p>
+  <p class="lead <?php echo $lineThrough ?>">
+    Prezzo: <?php echo esc_html($product->price); ?> €
+  </p>
+  <?php if ($discPrice): ?>
+  <span class="lead badge-pill badge-warning">
+    Prezzo Scontato: <?php echo esc_html($discPrice); ?> €
+  </span>
+  <?php endif; ?>
   <hr class="my-4">
 
 <?php if ($product->images ) : ?>

@@ -54,6 +54,7 @@ class Product {
   public $data_inizio_sconto;
   public $data_fine_sconto;
   public $qta;
+  public $sconto;
 
   public function __construct($id, $name, $price, $description, $category_id, $sconto = 0, $data_inizio_sconto = NULL, $data_fine_sconto = NULL, $qta = 0){
     $this->id = (int)$id;
@@ -211,6 +212,19 @@ class ProductManager extends DBManager {
         c.name like '%$search%'
       LIMIT 5;
     ");
+  }
+
+  public function getDiscountedPrice($productId){
+    $product = $this->get($productId);
+    if ($product->sconto == 0) {
+      return null;
+    }
+
+    $now = date('Y-m-d');
+    if ($product->data_inizio_sconto <= $now && $product->data_fine_sconto >= $now) {
+      return round($product->price - (($product->sconto * $product->price)/100), 2);
+    }
+    return null;
   }
 
   // Private Methods

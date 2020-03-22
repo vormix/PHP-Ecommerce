@@ -140,3 +140,6 @@ ol.carousel-indicators li {
   z-index: 1000;
   position: relative;
 }
+.line-through {
+  text-decoration: line-through;
+}
