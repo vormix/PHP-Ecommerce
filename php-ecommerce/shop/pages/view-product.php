@@ -46,6 +46,8 @@
   <span class="lead badge-pill badge-warning">
     Prezzo Scontato: <?php echo esc_html($discPrice); ?> €
   </span>
+  <br>
+  <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge-pill badge-warning"></span>
   <?php endif; ?>
   <hr class="my-4">
 
@@ -86,3 +88,9 @@
     </form>   
   </p>
 </div>
+
+<script>
+    $(document).ready(function(){
+      countdown($('.countdown'));
+    });
+</script>

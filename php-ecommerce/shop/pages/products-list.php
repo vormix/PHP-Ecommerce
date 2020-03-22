@@ -61,8 +61,8 @@
           <?php echo substr(esc_html($product->description), 0, 50); ?>
           <br>
           <?php if ($product->disc_price) : ?>
-          <span class="badge badge-pill badge-warning">Prezzo speciale <?php echo esc_html($product->disc_price); ?> €</span>
-          <span class="badge badge-pill badge-warning">Fino a: <?php echo esc_html($product->remaining_time);  ?></span>
+          <span class="badge-pill badge-warning">Prezzo speciale <?php echo esc_html($product->disc_price); ?> €</span>
+          <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge badge-pill badge-warning"></span>
           
           <?php endif ?>
           <span class="badge badge-pill badge-info" ><?php echo $qta;  ?></span>
@@ -91,6 +91,11 @@
 <script>
 var $document = $(document);
 $document.ready(function(){
+
+    $.each($document.find('.countdown'), (i, item) => {
+      countdown(item);
+    });
+
     $document.find('.product-card input:submit').on('click', e => {
      
       var $target = $(e.target);
@@ -116,5 +121,6 @@ $document.ready(function(){
        });
     });
 });
+
 
 </script>
