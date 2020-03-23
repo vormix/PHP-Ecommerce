@@ -61,7 +61,7 @@
           <?php echo substr(esc_html($product->description), 0, 50); ?>
           <br>
           <?php if ($product->disc_price) : ?>
-          <span class="badge-pill badge-warning">Prezzo speciale <?php echo esc_html($product->disc_price); ?> €</span>
+          <span class="badge-pill badge-warning">Prezzo speciale <?php echo esc_html(number_format((float)$product->disc_price, 2, '.', '')); ?> €</span>
           <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge badge-pill badge-warning"></span>
           
           <?php endif ?>
