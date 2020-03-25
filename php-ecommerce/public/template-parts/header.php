@@ -128,7 +128,7 @@ global $loggedInUser;
         </ul>
         <?php endif; ?>
 
-        <form class="form-inline mt-2 mt-md-0">
+        <form class="form-inline mt-2 mt-md-0" autocomplete="off">
           <input id="search" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
           <div class="live-search">
             <div class="overlay"></div>

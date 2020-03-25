@@ -60,7 +60,13 @@ foreach($_FILES as $key => $file) {
   $image = new ProductImage(0, $productId, 'jpg');
   $imageId = $imageMgr->create($image);
   $image->id = $imageId;
-  move_uploaded_file($_FILES[$key]['tmp_name'], $imgFolder . '/' . $imageId . '.jpg');
+
+  $imgFullPath = $imgFolder . '/' . $imageId . '.jpg';
+  move_uploaded_file($_FILES[$key]['tmp_name'], $imgFullPath);
+
+  ImageUtilities::wallpaper($imgFullPath);
+  ImageUtilities::thumbnail($imgFullPath);
+
   if ($productId == "0") {
     $image->product_id = $tmpDir;
   }

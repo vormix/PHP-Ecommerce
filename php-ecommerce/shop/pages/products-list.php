@@ -37,100 +37,12 @@
 ?>
 
 <h1>Lista Prodotti</h1>
-<div class="row">
-    <div class="mb-3 col-md-3 col-6 border">
-        <div class="shop-item">
-            <img src="../images/6/1.jpg" class="img-fluid" alt="">
-            <h5>Black Coat</h5>
-            <div class="d-flex justify-content-between bd-highlight mb-3">
-              <div class="p-2 bd-highlight bg-success text-white"> 235  € </div>
-              <div class="p-2 bd-highlight bg-secondary text-white">Qta 4</div>
-            </div>
-            <div class="mycentered-text"> 
-            <a class="btn btn-success btn-sm justify-content-center" href="#" role="button">Aggiungi al carrello</a>
-                <br>
-                <span>Prezzo Scontato</span>
-                <br>
-                <span>Prezzo Scontato</span>
-            </div>
-        </div>
-    </div>
-    <div class="mb-3 col-md-3 col-6 border">
-        <div class="shop-item">
-            <img src="../images/6/1.jpg" class="img-fluid" alt="">
-            <h3>Black Coat</h3>
-            <div class="d-flex justify-content-between bd-highlight mb-3">
-              <div class="p-2 bd-highlight bg-success text-white"> 235  € </div>
-              <div class="p-2 bd-highlight bg-secondary text-white">Qta 4</div>
-            </div>
-            <div class="mycentered-text"> 
-            <a class="btn btn-success btn-sm justify-content-center" href="#" role="button">Aggiungi al carrello</a>
-                <br>
-                <span>Prezzo Scontato</span>
-                <br>
-                <span>Prezzo Scontato</span>
-            </div>
-        </div>
-    </div>
-    <div class="mb-3 col-md-3 col-6 border">
-        <div class="shop-item">
-            <img src="../images/6/1.jpg" class="img-fluid" alt="">
-            <h3>Black Coat</h3>
-            <div class="d-flex justify-content-between bd-highlight mb-3">
-              <div class="p-2 bd-highlight bg-success text-white"> 235  € </div>
-              <div class="p-2 bd-highlight bg-secondary text-white">Qta 4</div>
-            </div>
-             
-            <div class="mycentered-text"> 
-            <a class="btn btn-success btn-sm justify-content-center" href="#" role="button">Aggiungi al carrello</a>
-                <br>
-                <span>Prezzo Scontato</span>
-                <br>
-                <span>Prezzo Scontato</span>
-            </div>
-             
-        </div>
-    </div>
-    <div class="product-card mb-3 col-md-3 col-6 border">
-        <div class="shop-item">
-            <img src="../images/6/1.jpg" class="img-fluid" alt="">
-            <h3>Black Coat</h3>
-            <div class="d-flex justify-content-between bd-highlight mb-3">
-              <div class="p-2 bd-highlight bg-success text-white"> 235  € </div>
-              <div class="p-2 bd-highlight bg-secondary text-white">Qta 4</div>
-            </div>
-            <div class="mycentered-text"> 
-            <a class="btn btn-success btn-sm justify-content-center" href="#" role="button">Aggiungi al carrello</a>
-                <br>
-                <span>Prezzo Scontato</span>
-                <br>
-                <span>Prezzo Scontato</span>
-            </div>
-        </div>
-    </div>
-</div>
+
 <?php if (count($products) > 0) : ?>
 <p class="lead">Di seguito la lista dei nostri prodotti in vendita...</p>
 
 <div class="row">
-<div class="product-card mb-3 col-md-3 col-6 border">
-        <div class="shop-item">
-            <img src="../images/6/1.jpg" class="img-fluid" alt="">
-            <h3>Black Coat</h3>
-            <div class="d-flex justify-content-between bd-highlight mb-3">
-              <div class="p-2 bd-highlight bg-success text-white"> 235  € </div>
-              <div class="p-2 bd-highlight bg-secondary text-white">Qta 4</div>
-            </div>
-            <div class="mycentered-text"> 
-            <a class="btn btn-success btn-sm justify-content-center" href="#" role="button">Aggiungi al carrello</a>
-                <br>
-                <span>Prezzo Scontato</span>
-                <br>
-                <span>Prezzo Scontato</span>
-            </div>
-        </div>
-    </div>
-    </div>
+
     <?php foreach($products as $product) : 
       if($product->qta <= 1){
         $btn="disabled";
@@ -140,33 +52,37 @@
         $btn="";
         $qta="Qta: <span class='qta'>".$product->qta . "</span>";
       }?>
-    <div class="product-card mb-3 col-md-3 col-6 border">
-        <div class="shop-item">
-            <img src="../images/6/1.jpg" class="img-fluid" alt="">
-            <h3><?php echo esc_html($product->name); ?></h3>
-            <div class="d-flex justify-content-between bd-highlight mb-3">
-              <div class="p-2 bd-highlight bg-success text-white"><?php echo esc_html($product->price); ?>  € </div>
-              <div class="p-2 bd-highlight bg-secondary text-white">Qta ><?php echo $qta;  ?></div>
-            </div>
-            <div class="mycentered-text"> 
-                <a class="btn btn-success btn-sm justify-content-center" href="#" role="button">Aggiungi al carrello</a>
-                <br>
-                <span>Prezzo Scontato</span>
-                <br>
-                <span>Prezzo Scontato</span>
-                <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id); ?>'">Vedi</button>
+    <div class="product-card card mb-3 col-md-3 col-6" >
+      <div class="card-header bg-dark text-light rounded-0">
+        <?php echo esc_html($product->name); ?>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <?php echo substr(esc_html($product->description), 0, 50); ?>
+          <br>
+          <?php if ($product->disc_price) : ?>
+            <span class="badge-pill badge-warning">Prezzo speciale <?php echo esc_html(number_format((float)$product->disc_price, 2, '.', '')); ?> €</span>
+            <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge badge-pill badge-warning"></span>          
+          <?php endif ?>
+          <span class="badge badge-pill badge-info" ><?php echo $qta;  ?></span>
+         
+          <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>    
+                
+        </li>
+      </ul>
+      <div class="footer">
+        <div class="product-actions">
+          <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id); ?>'">Vedi</button>
           <!--<a class="btn btn-outline-primary btn-sm" href="#">Aggiungi al carrello</a>-->
          <!-- <form method="post">-->
             <input type="hidden" name="id" value="<?php echo esc_html($product->id); ?>">
-            </div>
-            </div>
-            </div>
-             
-       
-       
-   
+            <input name="add_to_cart" type="submit" class="btn btn-primary btn-sm btn-block rounded-0" value="Aggiungi al carrello" <?php echo $btn;?>>
+          <!--</form>-->
+        </div>
+      </div>
+    </div>
     <?php endforeach; ?>
-
+    
 </div>
 <?php else : ?>
 

@@ -1,0 +1,1 @@
+ALTER TABLE product ADD mtitle TEXT NULL, ADD metadescription TEXT NULL;
