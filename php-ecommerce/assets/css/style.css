@@ -143,3 +143,18 @@ ol.carousel-indicators li {
 .line-through {
   text-decoration: line-through;
 }
+
+#thumbnail{
+    width: 100px;
+    height: 100px;
+}
+.shop-item .add-card {
+  display: inline-block;
+  color: #fff;
+  min-width: 130px;
+  padding: 11px;
+  background: #081624;
+}
+.mycentered-text {
+  text-align:center
+}

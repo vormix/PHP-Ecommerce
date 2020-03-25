@@ -48,6 +48,7 @@ class Product {
 
   public $id;
   public $name;
+  public $mtitle;
   public $price;
   public $description;
   public $category_id;
@@ -55,14 +56,18 @@ class Product {
   public $data_fine_sconto;
   public $qta;
   public $sconto;
+  public $metadescription;
 
-  public function __construct($id, $name, $price, $description, $category_id, $sconto = 0, $data_inizio_sconto = NULL, $data_fine_sconto = NULL, $qta = 0){
+  public function __construct($id, $name, $price, $description, $category_id, $sconto = 0, $data_inizio_sconto = NULL, $data_fine_sconto = NULL, $qta = 0,$mtitle=NULL, $metadescription=NULL){
     $this->id = (int)$id;
     $this->name = $name;
     $this->price = (float)$price;
     $this->description = $description;
     $this->category_id = (int)$category_id;
     $this->sconto = (int)$sconto;
+    $this->mtitle = $mtitle;
+    $this->metadescription = $metadescription;
+    
     if($this->sconto>0){
       $this->data_inizio_sconto = $data_inizio_sconto == NULL ? '1900-01-01' : $data_inizio_sconto;
       $this->data_fine_sconto = $data_fine_sconto == NULL ? '2099-01-01' : $data_fine_sconto;
@@ -76,7 +81,7 @@ class Product {
   }
 
   public static function CreateEmpty() {
-    return new Product(0, "", 0, "", 0, 0, NULL, NULL, 0);
+    return new Product(0, "", 0, "", 0, 0, NULL, NULL, 0, NULL, NULL);
   }
 
 }
@@ -85,7 +90,7 @@ class ProductManager extends DBManager {
 
   public function __construct(){
     parent::__construct();
-    $this->columns = array( 'id', 'name', 'price', 'description', 'category_id', 'sconto', 'data_inizio_sconto', 'data_fine_sconto', 'qta' );
+    $this->columns = array( 'id', 'name', 'price', 'description', 'category_id', 'sconto', 'data_inizio_sconto', 'data_fine_sconto', 'qta', 'mtitle',  'metadescription' );
     $this->tableName = 'product';
   }
 
@@ -232,7 +237,7 @@ class ProductManager extends DBManager {
     $imgMgr = new ProductImageManager();
     $dirname = $imgMgr->GetImagesPath() . $productId;
     array_map('unlink', glob("$dirname/*.*"));
-    rmdir($dirname);
+    if(is_dir($dirname))rmdir($dirname);
   }
 
   private function _deleteImagesFromDB($productId){

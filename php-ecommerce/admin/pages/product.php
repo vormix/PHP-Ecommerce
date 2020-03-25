@@ -28,10 +28,11 @@ if (isset($_GET['id'])) {
 
 // Submit add
 if (isset($_POST['add'])) {
-  
   $name = trim($_POST['name']);
+  $mtitle = trim($_POST['mtitle']);
   $category_id = trim($_POST['category_id']);
-  $description = trim($_POST['description']);
+  $description = esc(trim($_POST['description']));
+  $metadescription = esc(trim($_POST['metadescription']));
   $price = trim($_POST['price']);
   $sconto = isset($_POST['sconto']) ? trim($_POST['sconto']): "0";
   $data_inizio_sconto = trim($_POST['data_inizio_sconto']);
@@ -41,7 +42,8 @@ if (isset($_POST['add'])) {
 
   if ($name != '' && $category_id != '' && $category_id != '0' && $description != '' && $price != '') {
 
-    $product = new Product(0, $name, $price, $description, $category_id, $sconto, $data_inizio_sconto, $data_fine_sconto, $qta);
+    $product = new Product(0, $name, $price, $description, $category_id, $sconto, $data_inizio_sconto, $data_fine_sconto, $qta,$mtitle,$metadescription);
+    //var_dump($product);die;
     $id = $mgr->create($product);
 
     if ($id > 0) {
@@ -49,7 +51,7 @@ if (isset($_POST['add'])) {
         $mgr->MoveTempImages($tmpDir, $id);        
       }
 
-      echo "<script>location.href='".ROOT_URL."admin?page=products-list&msg=created';</script>";
+     echo "<script>location.href='".ROOT_URL."admin?page=products-list&msg=created';</script>";
       exit;
     } else {
       $alertMsg = 'err';
@@ -61,7 +63,6 @@ if (isset($_POST['add'])) {
 
 // Submit update
 if (isset($_POST['update'])) {
-
   $name = trim($_POST['name']);
   $category_id = trim($_POST['category_id']);
   $description = trim($_POST['description']);
@@ -69,14 +70,16 @@ if (isset($_POST['update'])) {
   $id = trim($_POST['id']);
   $sconto = isset($_POST['sconto']) ? trim($_POST['sconto']): "0";
   $qta = trim($_POST['qta']);
-  
+  $mtitle = trim($_POST['mtitle']);
+  $metadescription = esc(trim($_POST['metadescription']));
+
   if(isset($_POST['data_inizio_sconto']) && $_POST['data_inizio_sconto'] != ""){$data_inizio_sconto= $_POST['data_inizio_sconto'];}else{$data_inizio_sconto= "NULL";}
   if(isset($_POST['data_fine_sconto']) && $_POST['data_fine_sconto'] != ""){$data_fine_sconto= $_POST['data_fine_sconto'];}else{$data_fine_sconto= "NULL";}
 
 
   if ($id != '' && $id != '0' && $name != '' && $category_id != '' && $category_id != '0' && $description != '' && $price != '') {
 
-    $product = new Product($id, $name, $price, $description, $category_id,  $sconto, $data_inizio_sconto, $data_fine_sconto,$qta);
+    $product = new Product($id, $name, $price, $description, $category_id,  $sconto, $data_inizio_sconto, $data_fine_sconto,$qta,$mtitle,$metadescription);
     $numUpdated = $mgr->update($product, $id);
 
     if ($numUpdated >= 0) {
@@ -94,11 +97,17 @@ if (isset($_POST['update'])) {
 <a href="<?php echo ROOT_URL . 'admin?page=products-list'; ?>" class="back underline">&laquo; Lista Prodotti</a>
 
 <h1><?php echo esc_html($lblAction); ?> Prodotto</h1>
-
+<?php 
+   $mtitle=isset($product->mtitle) ? $product->mtitle : NULL;
+   $metadescript= isset($product->metadescription) ? $product->metadescription : NULL;  
+   $descript= isset($product->description) ? $product->description : NULL;
+?> 
 <form method="post" class="mt-2">
   <div class="form-group">
-    <label for="name">Nome</label>
+    <label for="name">Titolo</label>
     <input name="name" id="name" type="text" class="form-control" value="<?php echo esc_html($product->name); ?>">
+    <textarea rows="2" name="mtitle" id="mtitle" type="text" class="form-control"><?php echo html_entity_decode($mtitle);?></textarea>
+
   </div>
   <div class="form-group">
     <label for="category_id">Categoria</label>
@@ -112,9 +121,13 @@ if (isset($_POST['update'])) {
     </select>
   </div>
   <div class="form-group">
+  
+
     <label for="description">Descrizione</label>
-    <textarea rows="7" name="description" id="description" type="text" class="form-control"><?php echo esc_html($product->description); ?></textarea>
-  </div>
+    <textarea rows="7" name="description" id="description" type="text" class="form-control"><?php echo html_entity_decode($descript);?></textarea>
+    <textarea rows="7" name="metadescription" id="metad" type="text" class="form-control"><?php echo html_entity_decode($metadescript);?></textarea>
+    </div> 
+    
   <div class="row">
     <div class="col-md-4">
       <div class="form-group">
@@ -205,7 +218,24 @@ if (isset($_POST['update'])) {
 <script>
 var $document = $(document);
 $document.ready(function() {
+
   $('#img').on('change', uploadFiles );
+
+  $('#description').summernote({
+    placeholder: 'Descrizione',
+    tabsize: 2,
+    height: 100
+  });
+  $('#metad').summernote({
+    placeholder: 'Meta descrizione',
+    tabsize: 2,
+    height: 50
+  });
+  $('#mtitle').summernote({
+    placeholder: 'Meta Titolo ',
+    tabsize: 2,
+    height: 30
+  });
 
   $document.on('click', '.delete-img', e => deleteFile(e));
   $document.on('click', '.edit-img', e => openImageDetailsModal(e));
