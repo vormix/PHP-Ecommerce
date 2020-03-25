@@ -5,11 +5,14 @@
     public $id;
     public $user_id;
     public $client_id;
+    public $shipment_id;
 
-    public function __construct($id, $user_id, $client_id){
+
+    public function __construct($id, $user_id, $client_id, $shipment_id = 0){
       $this->id = $id > 0 ? $id : 0;
       $this->user_id = $user_id;
       $this->client_id = $client_id;
+      $this->shipment_id = $shipment_id;
     }
   }
 
@@ -280,7 +283,7 @@
       $_SESSION['client_id'] = $this->clientId;
       //var_dump($this->clientId, $_SESSION);
 
-      $this->columns = array( 'id', 'user_id', 'client_id' );
+      $this->columns = array( 'id', 'user_id', 'client_id', 'shipment_id' );
       $this->tableName = 'cart';
 
       $this->cartItemMgr = new CartItemManager();
@@ -454,9 +457,21 @@
         c.id as cart_id
         , c.user_id as user_id
         , SUM(ifnull(ci.quantity, 0)) as num_products
-        , sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
-            CAST((price - (price*sconto)/100) AS DECIMAL(8,2)) 
-            ,ifnull(price, 0))) as total
+        , (
+            sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
+              CAST((price - (price*sconto)/100) AS DECIMAL(8,2)) 
+              ,ifnull(price, 0))) 
+            + 
+            IFNULL 
+            (
+              (
+                SELECT IFNULL(price, 0)
+                FROM shipment
+                WHERE id = c.shipment_id
+              )
+              , 0
+            )
+          ) as total
       FROM 
         cart as c
         INNER JOIN cart_item as ci
@@ -483,6 +498,14 @@
         $this->_clearCart($cart['id']);
       }
       return $expiredCarts;
+    }
+
+    public function setShipmentMethod($cartId, $shipmentMethod){
+      $this->db->query("
+        UPDATE cart
+        SET shipment_id = $shipmentMethod
+        WHERE id = $cartId;
+      ");
     }
 
     // Privare Methods

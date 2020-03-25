@@ -6,6 +6,9 @@
 
   $cm = new CartManager();
   $cartId = $cm->getCurrentCartId();
+  
+  $sm = new ShipmentManager();
+  $shipments = $sm->GetShipments();
 
   if (isset($_POST['minus'])) {
     $cart_id = esc($_POST['cart_id']);
@@ -21,6 +24,16 @@
 
   $cart_total = $cm->getCartTotal($cartId);
   $cart_items = $cm->getCartItems($cartId);
+  $cart = $cm->get($cartId);
+  
+  $shipment_id = isset($cart->shipment_id) ? $cart->shipment_id : 0;
+  $sm = new ShipmentManager();
+  $sh = $sm->GetShipment($shipment_id);
+  $shipmentPrice = 0;
+  if (isset($sh->id)){
+    $shipmentPrice = $sh->price;
+  }
+
 
 ?>
 
@@ -62,6 +75,17 @@
       </div>   
     </li>
     <?php endforeach; ?>
+        <li class="list-group-item d-flex justify-content-between p-4">
+          <div class="row w-100">  
+            <div class="col-lg-4 col-6">
+              <span class="text-primary">Costi di Spedizione</span>
+            </div>
+            <div class="col-lg-6 lg-screen"></div>
+            <div class="col-lg-2 col-6">
+            <strong>€ <span id="spanShipmentPrice" class="text-primary"><?php echo (number_format((float) $shipmentPrice, 2, '.', ''));  ?></span></strong>
+            </div>
+          </div>
+        </li>
         <li class="cart-total list-group-item d-flex justify-content-between p-4">
           <div class="row w-100">  
             <div class="col-lg-4 col-6">
@@ -69,12 +93,25 @@
             </div>
             <div class="col-lg-6 lg-screen"></div>
             <div class="col-lg-2 col-6">
-              <span id="spanGrandTotal" class="text-primary">€ <?php echo esc_html($cart_total[0]['total']); ?></span>
+              <input type="hidden" id="total" value="<?php echo esc_html($cart_total[0]['total']); ?>">
+             € <span id="spanGrandTotal" class="text-primary"><?php echo esc_html($cart_total[0]['total']); ?></span>
             </div>
           </div>
         </li>
       </ul>
       <hr class="mb-4">
+
+      <div class="form-group">
+        <label for="shipmentMethods">Metodo di Spedizione</label>
+        <select name="shipmentMethods" id="shipmentMethods" type="text" class="form-control" value="0">
+          <option value="0"> - Scegli una modalità di spedizione - </option>
+          <?php if (count($shipments) > 0) : ?>
+            <?php foreach ($shipments as $shipment) : ?>
+              <option <?php if ($cart->shipment_id == $shipment->id ) echo 'selected' ; ?>  data-price="<?php echo esc_html($shipment->price); ?>" value="<?php echo esc_html($shipment->id); ?>"><?php echo esc_html($shipment->name); ?> - (€ <?php echo esc_html($shipment->price); ?>)</option>
+            <?php endforeach ; ?>
+          <?php endif ; ?>
+        </select>
+      </div>
 
       <div class="form-group">
         <label for="paymentMethods">Metodo di Pagamento</label>
@@ -148,6 +185,8 @@ $document.ready(function(){
   $card.hide();
 
   $document.find('#paymentMethods').on('change', enablePaymentButton);
+  $document.find('#shipmentMethods').on('change', updateShipmentPrice);
+  
   $document.find('.order-md-2 input:submit').on('click', e => {
     var $target = $(e.target);
     var $productButtons = $target.closest('div.cart-buttons');
@@ -158,6 +197,7 @@ $document.ready(function(){
     var incrementOrDecrement = $target.is('input[name="plus"]') ? 'plus': 'minus';
 
     var postData = {
+      action: 'incrementOrDecrement',
       cart_id: cartId,
       product_id: productId
     };
@@ -172,6 +212,39 @@ $document.ready(function(){
     });
   });
 });
+
+function updateShipmentPrice(e) {
+  var price = 0;
+  var shipmentMethod = $(e.target).val();
+  var options = e.target.options;
+  $.each(options, (i, option) => {
+    var $opt = $(option);
+    if ($opt.val() == shipmentMethod) {
+      price = $opt.attr('data-price');
+    }
+  });
+  setShipmentPrice(price);
+
+  var postData = {
+      action: 'setShipmentMethod',
+      shipmentMethod: shipmentMethod
+    };
+  $.post('../api/shop/cart.php', postData, response => {
+    console.log(response);
+  });
+}
+
+function setShipmentPrice(price){
+  $('#spanShipmentPrice').text(price.replace('.', ','));
+
+  price = parseFloat(price.replace('.', ','));
+  var total = parseFloat($('#total').val().replace(',', '.'));
+
+  total = total + price;
+  total =(Math.round(total * 100) / 100).toFixed(2);
+  $('#spanGrandTotal').text(total.toString().replace('.', ','));
+
+}
 
 function enablePaymentButton(e) {
 
@@ -202,7 +275,7 @@ function printNumOfCartItems(cart_items) {
 }
 
 function printTotal(cartTotal){
-  $('#spanGrandTotal').text('€ '+(cartTotal[0].total != null ? cartTotal[0].total : "0,00"));
+  $('#spanGrandTotal').text((cartTotal[0].total != null ? cartTotal[0].total : "0,00"));
 }
 
 function printProductBox(cart_items, productId, $productButtons, incrementOrDecrement){
