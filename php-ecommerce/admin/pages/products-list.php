@@ -45,13 +45,13 @@ $products = $mgr->getAll();
       $proimg = $mgr->GetProductWithImages($product->id); 
 
       if ($proimg->images ) {
-      echo '<div id="thumbnail'.$x.'" class="carousel slide" data-ride="carousel" data-interval="false" width="50px" height="50px" >
+      echo '<div id="thumbnail'.$x.'" class="thumbnail carousel slide" data-ride="carousel" data-interval="false" >
         <div class="carousel-inner">';
          
         $active = 'active';
             foreach ($proimg->images as $image){
             echo '<div class="carousel-item '.$active.'">';
-            echo '<img src="'.ROOT_URL . '/images/' . $proimg->id . '/' . $image->id . '_thumbnail.' . $image->image_extension.'" whidth="50px" height="50px">
+            echo '<img class="thumbnail" src="'.ROOT_URL . '/images/' . $proimg->id . '/' . $image->id . '.' . $image->image_extension.'" >
                   </div>';
             $active='';
 
@@ -66,7 +66,7 @@ $products = $mgr->getAll();
           </div>';
                  $x++;
           }else{
-                echo '<img src="../images/noimage.jpg" width="50px" height="50px"/>';
+                echo '<img src="../images/noimage.jpg" class="img-fluid thumbnail" />';
           }//END IF
    
      

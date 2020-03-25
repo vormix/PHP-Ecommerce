@@ -144,9 +144,13 @@ ol.carousel-indicators li {
   text-decoration: line-through;
 }
 
-#thumbnail{
+.thumbnail{
     width: 100px;
     height: 100px;
+}
+.product-list{
+  width: 180px;
+  height: 180px;
 }
 .shop-item .add-card {
   display: inline-block;
