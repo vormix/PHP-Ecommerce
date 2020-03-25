@@ -40,6 +40,8 @@
       $this->id = $id > 0 ? $id : 0;
       $this->user_id = $user_id;
       $this->status = $status;
+      $this->is_restored = $is_restored;
+      $this->is_email_sent = $is_email_sent;
     }
   }
 
