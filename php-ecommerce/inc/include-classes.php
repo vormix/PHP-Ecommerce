@@ -9,3 +9,4 @@
   require_once ROOT_PATH . 'classes/Category.php';
   require_once ROOT_PATH . 'classes/Shipment.php';
   require_once ROOT_PATH . 'classes/utilities/ImageUtilities.php';
+  require_once ROOT_PATH . 'classes/utilities/Utilities.php';

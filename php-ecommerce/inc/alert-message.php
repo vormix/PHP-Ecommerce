@@ -108,6 +108,12 @@ if ($alertMsg != '') {
       $msgBody = 'la mail non è valida';
       break; 
 
+    case 'email_not_exists':
+      $cssClass = 'alert-danger';
+      $msgHeading = 'ERRORE';
+      $msgBody = 'la mail non è registrata a sistema';
+      break; 
+
     case 'passwords_not_match':
       $cssClass = 'alert-danger';
       $msgHeading = 'ERRORE';
@@ -139,10 +145,16 @@ if ($alertMsg != '') {
       break;
 
     case 'order_quantity_resored':
-        $cssClass = 'alert-success';
-        $msgHeading = 'OK';
-        $msgBody = 'Quantità ordine ripristinata in stock.';
-        break;
+      $cssClass = 'alert-success';
+      $msgHeading = 'OK';
+      $msgBody = 'Quantità ordine ripristinata in stock.';
+      break;
+
+    case 'password_updated':
+      $cssClass = 'alert-success';
+      $msgHeading = 'OK';
+      $msgBody = 'Password aggiornata correttamente.';
+      break;
 
   }
 

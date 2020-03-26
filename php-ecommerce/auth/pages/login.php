@@ -41,5 +41,7 @@ if (isset($_POST['login'])) {
   </div>
   <input class="btn btn-primary right" type="submit" value="login" name="login">
   <a class="underline" href="<?php echo ROOT_URL; ?>auth?page=register">Non hai un account? Registrati</a>
+  <br>
+  <a class="underline" href="<?php echo ROOT_URL; ?>auth?page=forgot-password">Hai dimenticato la password?</a>
 </form>
 

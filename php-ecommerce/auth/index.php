@@ -17,10 +17,10 @@ if ($loggedInUser && $page != 'logout') {
   <div class="row">
     <div class="col-md-6 ml-auto mr-auto login-box">
       <div class="main">
+        <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
         <a class="back underline" href="<?php echo ROOT_URL; ?>">&laquo; Torna alla Home</a>
         <br>
         <?php include "pages/$page.php"; ?>
-        <?php include ROOT_PATH . 'inc/alert-message.php'; ?>
       </div>
     </div>
   </div>
