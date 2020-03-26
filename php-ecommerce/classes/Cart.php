@@ -38,13 +38,18 @@
     public $status;
     public $is_restored;
     public $is_email_sent;
+    public $shipment_name;
+    public $shipment_price;
 
-    public function __construct($id, $user_id, $status, $is_restored = 0, $is_email_sent = 0){
+    public function __construct($id, $user_id, $status, $is_restored = 0, $is_email_sent = 0, $shipment_name = NULL, $shipment_price = 0){
       $this->id = $id > 0 ? $id : 0;
       $this->user_id = $user_id;
       $this->status = $status;
       $this->is_restored = $is_restored;
       $this->is_email_sent = $is_email_sent;
+      $this->shipment_name = $shipment_name;
+      $this->shipment_price = $shipment_price;
+
     }
   }
 
@@ -62,7 +67,7 @@
   class OrderManager extends DBManager {
     public function __construct(){
       parent::__construct();
-      $this->columns = array( 'id', 'user_id', 'status', 'is_restored', 'is_email_sent' );
+      $this->columns = array( 'id', 'user_id', 'status', 'is_restored', 'is_email_sent', 'shipment_name', 'shipment_price' );
       $this->tableName = 'orders';
     }
 
@@ -108,7 +113,13 @@
     }
 
     public function createOrderFromCart($cartId, $userId){
-      $orderId = $this->create(new Order(0, $userId, 'pending'));
+
+      $cm = new CartManager();
+      $cart = $cm->get($cartId);
+      $sm = new ShipmentManager();
+      $sh = $sm->get($cart->shipment_id);
+
+      $orderId = $this->create(new Order(0, $userId, 'pending', 0, 0, $sh->name, $sh->price));
       $this->db->query("
         INSERT INTO order_item (order_id, product_id, quantity, single_price)
         SELECT 
@@ -146,6 +157,8 @@
           , o.user_id as user_id
           , SUM(ifnull(oi.quantity, 0)) as num_products
           , SUM(ifnull(oi.quantity, 0) * ifnull(oi.single_price, 0)) as total
+          , IFNULL(o.shipment_price, 0) AS shipment_price
+          , IFNULL(o.shipment_name, 'N/D') AS shipment_name
         FROM 
           orders as o
           INNER JOIN order_item as oi

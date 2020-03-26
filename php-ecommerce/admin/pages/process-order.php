@@ -99,7 +99,12 @@ $count = 0;
   ?>
   <tr> 
     <th colspan="100%">
-      <h4 class="inline">Totale <?php echo $orderTotal['total']; ?> €</h4>
+      <p class="lead">Spedizione: <?php echo $orderTotal['shipment_name']; ?> (<?php echo $orderTotal['shipment_price']; ?> €)</p>
+    </th>
+  </tr>
+  <tr> 
+    <th colspan="100%">
+      <h4 class="inline">Totale <?php echo (number_format((float)  ($orderTotal['total'] + $orderTotal['shipment_price']), 2, '.', ''));  ?> €</h4>
       <h4 class="inline right"><span class="badge badge-<?php echo $cssClass[$status] ?> badge-pill">Ordine <?php echo $statusLbl[$status] ?></span></h4>
       <?php if ($status == 'payed') : ?>
       <hr>

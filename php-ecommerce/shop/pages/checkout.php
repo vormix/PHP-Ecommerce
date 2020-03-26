@@ -62,7 +62,9 @@ foreach($orderItems as $item)
 {
   $mailBody .= "<tr><td $style>".$item['product_name']."</td><td $style>".$item['single_price']."</td><td $style>".$item['quantity']."</td><td $style>".$item['total_price']."</td></tr>";
 }
-$mailBody .= "<tr><td $style colspan='4'>Totale €". $orderTotal['total'] . "</td></tr></table>";
+$mailBody .= "<tr><td $style colspan='4'>Spedizione: ". $orderTotal['shipment_name'] ." (". $orderTotal['shipment_price'] . " €)</td></tr>";
+$mailBody .= "<tr><td $style colspan='4'>Totale €". (number_format((float)  ($orderTotal['total'] + $orderTotal['shipment_price']), 2, '.', '')) . "</td></tr>";
+$mailBody .= "</table>";
 
 $txt .= $mailBody . $br ;
 
@@ -86,7 +88,11 @@ foreach($orderItems as $item)
 {
   $htmlBody .= "<tr><td $style>".$item['product_name']."</td><td $style>€ ".$item['single_price']."</td><td $style>".$item['quantity']."</td><td $style>€ ".$item['total_price']."</td></tr>";
 }
-$htmlBody .= "<tr><td $style colspan='4'>Totale €". $orderTotal['total'] . "</td></tr></table>";
+$htmlBody .= "<tr><td $style colspan='4'>Spedizione: ". $orderTotal['shipment_name'] ." (". $orderTotal['shipment_price'] . " €)</td></tr>";
+$htmlBody .= "<tr><td $style colspan='4'>Totale €". (number_format((float)  ($orderTotal['total'] + $orderTotal['shipment_price']), 2, '.', ''))  . "</td></tr>";
+$htmlBody .= "</table>";
+
+
 
 ?>
 

@@ -117,7 +117,7 @@
       global $loggedInUser;
       ?>
       <?php if ($loggedInUser) : ?>
-        <a  id="paypalPay" onclick="return confirm('Confermi invio ordine?');" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
+        <a  id="paypalPay" onclick="return checkIfShippingSelected();" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
         <div id="cardPay">
           <!-- Stripe -->
           <div class="sr-root">
@@ -127,7 +127,7 @@
                   <div class="sr-input sr-card-element" id="card-element"></div>
                 </div>
                 <div class="sr-field-error" id="card-errors" role="alert"></div>
-                <button class="stripe-button btn btn-primary btn-block">
+                <button onclick="return checkIfShippingSelected();" class="stripe-button btn btn-primary btn-block">
                   <div class="spinner hidden"></div>
                   <span class="button-text">Paga con Carta di Credito</span><span class="order-amount"></span>
                 </button>
@@ -204,14 +204,23 @@ $document.ready(function(){
   });
 });
 
+function checkIfShippingSelected(e) {
+  var selectedShipmentMethod = $document.find('#shipmentMethods').val();
+  if (selectedShipmentMethod == "0") {
+    bootbox.alert("Selezionare un metodo di spedizione valido.");
+    return false;
+  }
+}
+
 function updateShipmentPrice(e) {
-  var price = 0;
+  var price = 0.00;
   var shipmentMethod = $(e.target).val();
   var options = e.target.options;
   $.each(options, (i, option) => {
     var $opt = $(option);
     if ($opt.val() == shipmentMethod) {
       price = $opt.attr('data-price');
+      price = parseFloat(price);
     }
   });
   setShipmentPrice(price);
@@ -226,9 +235,12 @@ function updateShipmentPrice(e) {
 }
 
 function setShipmentPrice(price){
-  $('#spanShipmentPrice').text(price.replace('.', ','));
+  if (!price) {
+    price = 0;
+  }
+  var strprice =(Math.round(price  * 100) / 100).toFixed(2);
+  $('#spanShipmentPrice').text(strprice.replace('.', ','));
 
-  price = parseFloat(price.replace('.', ','));
   var total = parseFloat($('#total').val().replace(',', '.'));
 
   total = total + price;
@@ -266,11 +278,12 @@ function printNumOfCartItems(cart_items) {
 }
 
 function printTotal(cartTotal){
-  var total = parseFloat(cartTotal[0].total);
-  total =(Math.round(total * 100) / 100).toFixed(2);
+  var totalItems = cartTotal[0].total == null ? 0 : cartTotal[0].total;
+  total =(Math.round(totalItems * 100) / 100).toFixed(2);
   $('#total').val(total);
 
-  total = parseFloat(cartTotal[0].total) + parseFloat(cartTotal[0].shipment_price);
+  var shipmentPrice = cartTotal[0].shipment_price == null ? 0 : cartTotal[0].shipment_price;
+  total = parseFloat(totalItems) + parseFloat(shipmentPrice);
   total =(Math.round(total * 100) / 100).toFixed(2);
   $('#spanGrandTotal').text((total));
 }

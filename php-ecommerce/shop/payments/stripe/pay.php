@@ -20,11 +20,13 @@ if ($cartMgr->isEmptyCart($cartId)){
 }
 
 $cartTotal = $cartMgr->getCartTotal($cartId)[0]['total'];
+$shipmentPrice = $cartMgr->getCartTotal($cartId)[0]['shipment_price'];
+
 if (!$cartTotal || $cartTotal <= 0) {
   die('amount is zero');
 }
 
-$amount = round((float) $cartTotal, 2) * 100;
+$amount = round((float) ($cartTotal + $shipmentPrice), 2) * 100;
 
 try {
   $intent = \Stripe\PaymentIntent::create([

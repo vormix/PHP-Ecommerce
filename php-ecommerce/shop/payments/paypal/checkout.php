@@ -31,7 +31,7 @@ $cartItems = $cartMgr->getCartItems($cartId);
 $cartTotal = $cartMgr->getCartTotal($cartId)[0];
 
 // Paypal info
-$shipping = 0.00;
+$shipping = $cartTotal['shipment_price'];
 
 $items = [];
 foreach($cartItems as $item) {
