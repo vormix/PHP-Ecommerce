@@ -24,15 +24,6 @@
 
   $cart_total = $cm->getCartTotal($cartId);
   $cart_items = $cm->getCartItems($cartId);
-  $cart = $cm->get($cartId);
-  
-  $shipment_id = isset($cart->shipment_id) ? $cart->shipment_id : 0;
-  $sm = new ShipmentManager();
-  $sh = $sm->GetShipment($shipment_id);
-  $shipmentPrice = 0;
-  if (isset($sh->id)){
-    $shipmentPrice = $sh->price;
-  }
 
 
 ?>
@@ -82,7 +73,7 @@
             </div>
             <div class="col-lg-6 lg-screen"></div>
             <div class="col-lg-2 col-6">
-            <strong>€ <span id="spanShipmentPrice" class="text-primary"><?php echo (number_format((float) $shipmentPrice, 2, '.', ''));  ?></span></strong>
+            <strong>€ <span id="spanShipmentPrice" class="text-primary"><?php echo (number_format((float) $cart_total[0]['shipment_price'], 2, '.', ''));  ?></span></strong>
             </div>
           </div>
         </li>
@@ -94,7 +85,7 @@
             <div class="col-lg-6 lg-screen"></div>
             <div class="col-lg-2 col-6">
               <input type="hidden" id="total" value="<?php echo esc_html($cart_total[0]['total']); ?>">
-             € <span id="spanGrandTotal" class="text-primary"><?php echo esc_html($cart_total[0]['total']); ?></span>
+             € <span id="spanGrandTotal" class="text-primary"><?php echo (number_format((float) ($cart_total[0]['shipment_price'] + $cart_total[0]['total']), 2, '.', '')); ?></span>
             </div>
           </div>
         </li>
@@ -107,7 +98,7 @@
           <option value="0"> - Scegli una modalità di spedizione - </option>
           <?php if (count($shipments) > 0) : ?>
             <?php foreach ($shipments as $shipment) : ?>
-              <option <?php if ($cart->shipment_id == $shipment->id ) echo 'selected' ; ?>  data-price="<?php echo esc_html($shipment->price); ?>" value="<?php echo esc_html($shipment->id); ?>"><?php echo esc_html($shipment->name); ?> - (€ <?php echo esc_html($shipment->price); ?>)</option>
+              <option <?php if ($cart_total[0]['shipment_id'] == $shipment->id ) echo 'selected' ; ?>  data-price="<?php echo esc_html($shipment->price); ?>" value="<?php echo esc_html($shipment->id); ?>"><?php echo esc_html($shipment->name); ?> - (€ <?php echo esc_html($shipment->price); ?>)</option>
             <?php endforeach ; ?>
           <?php endif ; ?>
         </select>
@@ -275,7 +266,13 @@ function printNumOfCartItems(cart_items) {
 }
 
 function printTotal(cartTotal){
-  $('#spanGrandTotal').text((cartTotal[0].total != null ? cartTotal[0].total : "0,00"));
+  var total = parseFloat(cartTotal[0].total);
+  total =(Math.round(total * 100) / 100).toFixed(2);
+  $('#total').val(total);
+
+  total = parseFloat(cartTotal[0].total) + parseFloat(cartTotal[0].shipment_price);
+  total =(Math.round(total * 100) / 100).toFixed(2);
+  $('#spanGrandTotal').text((total));
 }
 
 function printProductBox(cart_items, productId, $productButtons, incrementOrDecrement){

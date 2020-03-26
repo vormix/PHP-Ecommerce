@@ -457,27 +457,20 @@
         c.id as cart_id
         , c.user_id as user_id
         , SUM(ifnull(ci.quantity, 0)) as num_products
-        , (
-            sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
-              CAST((price - (price*sconto)/100) AS DECIMAL(8,2)) 
-              ,ifnull(price, 0))) 
-            + 
-            IFNULL 
-            (
-              (
-                SELECT IFNULL(price, 0)
-                FROM shipment
-                WHERE id = c.shipment_id
-              )
-              , 0
-            )
-          ) as total
+        , sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
+            CAST((p.price - (p.price * p.sconto) / 100) AS DECIMAL(8,2)) 
+            ,ifnull(p.price, 0))) 
+          as total
+        , IFNULL(s.id, 0) as shipment_id
+        , IFNULL(s.price, 0) as shipment_price
       FROM 
         cart as c
         INNER JOIN cart_item as ci
           ON c.id = ci.cart_id
         INNER JOIN product as p
           ON ci.product_id = p.id
+        LEFT JOIN shipment s
+          ON s.id = c.shipment_id
       WHERE
         $cartId = c.id;");
     }
