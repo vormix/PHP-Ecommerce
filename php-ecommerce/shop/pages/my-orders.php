@@ -37,6 +37,7 @@
       <th>Num.Ordine</th>
       <th>Data Pagamento</th>
       <th>Link</th>
+      <th class="text-center">PDF</th>
     </tr>
   <?php foreach ($payedOrders as $order) : $count++; ?>
   
@@ -46,6 +47,9 @@
       <td><?php echo esc_html($order['created_date']); ?></td>
       <td>
         <a class="underline" href="<?php echo ROOT_URL . 'shop?page=view-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td class="text-center">
+        <a target="_blank" href="<?php echo ROOT_URL . 'shop/invoices/print-invoice.php?orderId=' . esc_html($order['order_id']); ?>" title="stampa PDF" class="btn btn-lg btn-link p-0"><i class="fas fa-file-pdf"></i></a>
       </td>
     </tr>
   <?php endforeach; $count=0; ?>
@@ -81,7 +85,6 @@
 
 <hr>
 
-
 <?php if (count($canceledOrders) > 0) :  ?>
   <h4 class="mb-3">Ordini cancellati</h4>
   <table class="table table-bordered">
@@ -116,6 +119,7 @@
       <th>Data Invio</th>
       <th class="big-screen">Data Spedizione</th>
       <th>Link</th>
+      <th class="text-center">PDF</th>
     </tr>
   <?php foreach ($shippedOrders as $order) : $count++; ?>
     <tr class="text-success">
@@ -125,6 +129,9 @@
       <td class="big-screen"><?php  echo esc_html($order['shipped_date']); ?></td>
       <td>
         <a class="underline" href="<?php echo ROOT_URL . 'shop?page=view-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td class="text-center">
+        <a target="_blank" href="<?php echo ROOT_URL . 'shop/invoices/print-invoice.php?orderId=' . esc_html($order['order_id']); ?>" title="stampa PDF" class="btn btn-lg btn-link p-0"><i class="fas fa-file-pdf"></i></a>
       </td>
     </tr>
   <?php endforeach; $count=0; ?>

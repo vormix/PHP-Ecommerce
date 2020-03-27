@@ -40,6 +40,7 @@
       <th>Data Pagamento</th>
       <th>Cliente</th>
       <th>Link</th>
+      <th class="text-center">PDF</th>
       <th>Azioni</th>
     </tr>
   <?php foreach ($payedOrders as $order) : $count++; ?>
@@ -51,6 +52,9 @@
       <td><?php echo esc_html($order['user_descr']); ?></td>
       <td>
         <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td class="text-center">
+        <a target="_blank" href="<?php echo ROOT_URL . 'shop/invoices/print-invoice.php?orderId=' . esc_html($order['order_id']); ?>" title="stampa PDF" class="btn btn-lg btn-link p-0"><i class="fas fa-file-pdf"></i></a>
       </td>
       <td>  
         <form method="post" action="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>&ship_order=1" class="inline right">
@@ -76,6 +80,7 @@
       <th>Data Spedizione</th>
       <th>Cliente</th>
       <th>Link</th>
+      <th class="text-center">PDF</th>
     </tr>
   <?php foreach ($shippedOrders as $order) : $count++; ?>
     <tr>
@@ -86,6 +91,9 @@
       <td><?php echo esc_html($order['user_descr']); ?></td>
       <td>
         <a class="underline" href="<?php echo ROOT_URL . 'admin?page=process-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td class="text-center">
+        <a target="_blank" href="<?php echo ROOT_URL . 'shop/invoices/print-invoice.php?orderId=' . esc_html($order['order_id']); ?>" title="stampa PDF" class="btn btn-lg btn-link p-0"><i class="fas fa-file-pdf"></i></a>
       </td>
     </tr>
   <?php endforeach; $count=0; ?>

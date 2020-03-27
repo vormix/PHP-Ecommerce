@@ -11,13 +11,19 @@
 
 
   if (!isset($_GET['id'])){
-    echo "<script>location.href='".ROOT_URL."admin?page=orders-list&msg=not_found';</script>";
+    echo "<script>location.href='".ROOT_URL."shop?page=my-orders&msg=not_found';</script>";
     exit;
   }
 
   $orderId = esc($_GET['id']);
-
   $orderMgr = new OrderManager();
+  
+  $order = $orderMgr->get($orderId);
+  if ($loggedInUser->user_type != 'admin' && $order->user_id != $loggedInUser->id) {
+    echo "<script>location.href='".ROOT_URL."shop?page=my-orders&msg=forbidden';</script>";
+    exit;
+  }
+
   $orderItems = $orderMgr->getOrderItems($orderId);
   $orderTotal = $orderMgr->getOrderTotal($orderId)[0];
 
@@ -31,10 +37,14 @@
   $count = 0;
 ?>
 
-<a href="<?php echo ROOT_URL . 'shop?page=my-orders'; ?>" class="back underline">&laquo; I miei Ordini</a>
+<a href="<?php echo ROOT_URL . 'shop?page=my-orders'; ?>" class="back underline d-block">&laquo; I miei Ordini</a>
 
-<h1 cass="mb-4">Ordine #<?php echo esc_html($orderId); ?></h1>
-
+<h1 class="mb-4 d-inline">Ordine #<?php echo esc_html($orderId); ?></h1>
+<div class="pdfDiv float-right d-inline mr-5">
+  <a target="_blank" href="<?php echo ROOT_URL . 'shop/invoices/print-invoice.php?orderId=' . esc_html($orderId); ?>" title="stampa PDF" class="btn btn-lg btn-link p-0">
+    <i class="fas fa-file-pdf fa-2x"></i>
+  </a>
+</div>
   <table class="table table-bordered">
     <tr>
       <th class="big-screen">#</th>
