@@ -3,12 +3,16 @@ class Category {
 
     public $id;
     public $name;
-     
+    public $description;
+    public $metadesc;
+    public $parent_id;     
   
-    public function __construct($id, $name){
+    public function __construct($id, $name, $description, $metadesc = NULL, $parent_id = NULL){ 
       $this->id = (int)$id;
       $this->name = $name;
-     
+      $this->description = $description;
+      $this->metadesc = $metadesc;
+      $this->parent_id = $parent_id;
     }
   
  
@@ -17,7 +21,7 @@ class Category {
 
     public function __construct(){
         parent::__construct();
-        $this->columns = array( 'id', 'name' );
+        $this->columns = array( 'id', 'name','description', 'metadesc', 'parent_id');
         $this->tableName = 'category';
     }
 
