@@ -6,6 +6,7 @@ $(document).ready(function(){
 
   $('.live-search').hide();
   $('#search').on('keyup', searchProducts);
+  $('#categoriesMenu').on('click', '.caret', toggleCaretClass);
 });
 
 function displayMessage(message) {
@@ -20,6 +21,13 @@ function displayMessage(message) {
   $('.main-content').prepend(htmlMsg);
 }
 
+function toggleCaretClass(e){
+  var $target = $(e.target);
+  $('.caret').removeClass('fa-caret-up').addClass('fa-caret-down');
+  if (!$target.closest('li.card').find('ul.list-group').hasClass('show')) {
+    $target.removeClass('fa-caret-down').addClass('fa-caret-up');
+  }
+}
 
 function searchProducts(e) {
   if (e.target.value.length < 3) {

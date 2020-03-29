@@ -162,3 +162,6 @@ ol.carousel-indicators li {
 .mycentered-text {
   text-align:center
 }
+.caret {
+  cursor: pointer;
+}

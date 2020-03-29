@@ -6,15 +6,15 @@
   }
 
   global $loggedInUser;
-  $cl = new CategoryManager();
+  $cm = new CategoryManager();
   if (isset($_POST['delete'])) {
 
     $id = trim($_POST['id']);
-    $cl->DeleteCategory($id);
+    $cm->DeleteCategory($id);
     $alertMsg = 'deleted';
   }
   
-  $categories=$cl->GetCategories();
+  $categories=$cm->GetCategories();
 
 ?>
 <a href="<?php echo ROOT_URL . 'admin?page=category'; ?>" class="btn btn-primary mb-3">Aggiungi Categoria</a>

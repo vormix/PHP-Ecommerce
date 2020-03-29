@@ -22,10 +22,6 @@ class SpecialTreatment {
         $this->columns = array( 'id', 'name', 'special_treatment_value', 'type_code' );
         $this->tableName = 'special_treatment';
     }
-    public function GetCategories() {
-        $category = parent::getAll();
-        return $category;
-    }
 
     public function GetTypes(){
       $types = $this->db->query("
