@@ -1,23 +1,70 @@
 <?php
 
+if (! defined('ROOT_URL')) {
+  include_once '../../inc/init.php';
+}
+
 // Prevent from direct access
 if (! defined('ROOT_URL')) {
   die;
 }
 
+global $loggedInUser;
 if (!$loggedInUser) {
   echo "<script>location.href='".ROOT_URL."auth?page=login&msg=login_for_checkout';</script>";
+  exit;
+}
+
+$cartMgr = new CartManager();
+$orderMgr = new OrderManager();
+
+// Profilo pagamento Ritardato
+if (isset($_POST['pay'])) {
+
+  $pm = new ProfileManager();
+  $delayedPayments = $pm->GetUserDelayedPayments();
+
+  if (count($delayedPayments) == 0) {
+    echo "<script>location.href='".ROOT_URL."public';</script>";
+    exit;
+  }
+
+  $hasPayment = false;
+  $paymentMethodId = esc($_POST['paymentMethod']); 
+  foreach($delayedPayments as $p){
+    if ($p->id == $paymentMethodId) {
+      $hasPayment = true;
+      break;
+    }
+  }
+
+  if (!$hasPayment) {
+    echo "<script>location.href='".ROOT_URL."public';</script>";
+    exit;
+  }
+
+  // Qui sono sicuro che l'utente ha la facoltà del pagamento ritardato scelto, quindi creo l'ordine
+  
+  $cartId = $cartMgr->getCurrentCartId();
+  if ($cartMgr->isEmptyCart($cartId)){
+    die('cart is empty');
+  }
+
+  $orderId = $orderMgr->createOrderFromCart($cartId, $loggedInUser->id);
+  $paymentCode = NULL;
+  $paymentStatus = NULL;
+  $status = 'delayed';
+  $paymentMethod = $paymentMethodId;
+  $orderMgr->SavePaymentDetails($orderId, $paymentCode, $paymentStatus, $paymentMethod, $status);
+
+  echo "<script>location.href='".ROOT_URL."shop?page=checkout&orderId=".$orderId."&success=true';</script>";
   exit;
 }
 
 global $alertMsg;
 $error = $_GET['success'] != "true";
 
-
-$cartMgr = new CartManager();
-$orderMgr = new OrderManager();
-
-$orderId = (int) $_GET['orderId'];
+$orderId =  (int) $_GET['orderId'];
 $order = $orderMgr->get($orderId);
 if (!$order || $loggedInUser->id != $order->user_id) {
   echo "<script>location.href='".ROOT_URL."public';</script>";
@@ -99,6 +146,8 @@ $htmlBody .= "</table>";
 <?php if ($error == false) : ?>
 <h1>Grazie per aver effettuato l'acquisto</h1>
 <p class="lead">Di seguito un riepilogo. Riceverà una mail con i dettagli dell'ordine</p>
+<a class="back underline" href="<?php echo ROOT_URL . "shop?page=view-order&id=$orderId" ?>">Visualizza Ordine &raquo;</a><br>
+
 <br>
 <?php  else : ?>
 <h1>Si è verificato un errore durante il pagamento.</h1>

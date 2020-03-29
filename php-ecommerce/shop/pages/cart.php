@@ -10,6 +10,9 @@
   $sm = new ShipmentManager();
   $shipments = $sm->GetShipments();
 
+  $pm = new ProfileManager();
+  $delayedPayments = $pm->GetUserDelayedPayments(); 
+
   if (isset($_POST['minus'])) {
     $cart_id = esc($_POST['cart_id']);
     $product_id = esc($_POST['product_id']);
@@ -110,6 +113,13 @@
           <option value="0"> - Scegli una modalità di pagamento - </option>
           <option value="card">Carta di Credito</option>
           <option value="paypal">PayPal</option>
+
+          <?php if (count($delayedPayments) > 0) : ?>
+            <?php foreach ($delayedPayments as $payment) : ?>
+              <option value="<?php echo $payment->id ?>"><?php echo $payment->name ?></option>
+            <?php endforeach ; ?>
+          <?php endif; ?>
+
         </select>
       </div>
 
@@ -117,7 +127,7 @@
       global $loggedInUser;
       ?>
       <?php if ($loggedInUser) : ?>
-        <a  id="paypalPay" onclick="return checkIfShippingSelected();" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
+        <a  id="paypalPay" class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'shop/payments/paypal/checkout.php' ?>">Paga con PayPal</a>
         <div id="cardPay">
           <!-- Stripe -->
           <div class="sr-root">
@@ -127,7 +137,7 @@
                   <div class="sr-input sr-card-element" id="card-element"></div>
                 </div>
                 <div class="sr-field-error" id="card-errors" role="alert"></div>
-                <button onclick="return checkIfShippingSelected();" class="stripe-button btn btn-primary btn-block">
+                <button id="stripePay" class="stripe-button btn btn-primary btn-block">
                   <div class="spinner hidden"></div>
                   <span class="button-text">Paga con Carta di Credito</span><span class="order-amount"></span>
                 </button>
@@ -141,6 +151,12 @@
             </div>
           </div>
           <!-- Stripe -->
+        </div>
+        <div id="standardPay">
+          <form method="post"  action="<?php echo ROOT_URL . 'shop/pages/checkout.php' ?>">
+            <input type="hidden" name="paymentMethod" id="paymentMethod">
+            <button name="pay" type="submit" class="btn btn-primary btn-block">Paga</a>
+          </form>
         </div>
       <?php else : ?>
         <a class="btn btn-primary btn-block" href="<?php echo ROOT_URL . 'auth?page=register' ?>">Registrati per effettuare ordine</a>
@@ -171,12 +187,16 @@ $document.ready(function(){
   $paymentMethods = $('#paymentMethods');
   $paypal = $('#paypalPay');
   $card = $('#cardPay');
+  $standardPay = $('#standardPay');
 
   $paypal.hide();
   $card.hide();
+  $standardPay.hide();
 
   $document.find('#paymentMethods').on('change', enablePaymentButton);
   $document.find('#shipmentMethods').on('change', updateShipmentPrice);
+
+  bindButtonEvents();
   
   $document.find('.order-md-2 input:submit').on('click', e => {
     var $target = $(e.target);
@@ -204,12 +224,45 @@ $document.ready(function(){
   });
 });
 
-function checkIfShippingSelected(e) {
-  var selectedShipmentMethod = $document.find('#shipmentMethods').val();
-  if (selectedShipmentMethod == "0") {
-    bootbox.alert("Selezionare un metodo di spedizione valido.");
-    return false;
+function bindButtonEvents() {
+  $paypal.on('click', confirmPayment);
+  $card.find('button').on('click', confirmPayment);
+  $standardPay.find('button').on('click', confirmPayment);
+}
+
+function unbindButtonEvents() {
+  $paypal.off('click');
+  $card.off('button').off('click');
+  $standardPay.find('button').off('click');
+}
+
+function confirmPayment(e, confirmed){
+
+  if (confirmed) {
+    event.returnValue = true;
   }
+
+  e.preventDefault();
+  var $target = $(e.target);
+
+  if (!isShippingSelected()) {
+    bootbox.alert("Selezionare un metodo di spedizione valido.");
+    return; 
+  }
+
+  bootbox.confirm('Confermi invio ordine?', function(response){
+    if (!response) return;
+
+    $target.off('click');
+    setTimeout(() => { $target.on('click', confirmPayment); }, 1000);
+    e.currentTarget.click();
+  });
+  
+}
+
+function isShippingSelected(e) {
+  var selectedShipmentMethod = $document.find('#shipmentMethods').val();
+  return selectedShipmentMethod != "0";
 }
 
 function updateShipmentPrice(e) {
@@ -251,18 +304,29 @@ function setShipmentPrice(price){
 
 function enablePaymentButton(e) {
 
-  switch($paymentMethods.val()) {
+var selectedPaymentMethod = $paymentMethods.val();
+  switch(selectedPaymentMethod) {
     case 'paypal':
       $paypal.show();
       $card.hide();
+      $standardPay.hide();
       break;
     case 'card':
       $card.show();
       $paypal.hide();
+      $standardPay.hide();
+      break;
+    case '0':
+      $card.hide();
+      $paypal.hide();
+      $standardPay.hide();
       break;
     default:
       $card.hide();
       $paypal.hide();
+      $standardPay.show();
+      $('#paymentMethod').val(selectedPaymentMethod);
+      break;
   }
 }
 

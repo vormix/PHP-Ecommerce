@@ -138,6 +138,17 @@
         WHERE
           c.id = $cartId;
       ");
+
+      // User Profile Discount
+      $pm = new ProfileManager();
+      $userDiscount = $pm->GetUserDiscount();
+      if ($userDiscount > 0){
+        $this->db->query("
+          UPDATE order_item
+          SET single_price = CAST(single_price - ((single_price * $userDiscount) / 100) AS DECIMAL(8,2)) 
+          WHERE order_id = $orderId;
+        ");
+      }
         
       $this->db->query("
         DELETE cart, cart_item
@@ -225,8 +236,10 @@
       return $result;
     }
 
-    public function SavePaymentDetails($orderId, $paymentCode, $paymentStatus, $paymentMethod){
-      $status = $paymentStatus == 'approved' ? 'payed' : 'canceled';
+    public function SavePaymentDetails($orderId, $paymentCode, $paymentStatus, $paymentMethod, $status = NULL){
+      if ($status == NULL){
+        $status = $paymentStatus == 'approved' ? 'payed' : 'canceled';
+      }
 
       $this->db->query("
         UPDATE orders
@@ -465,27 +478,39 @@
     }
 
     public function getCartTotal($cartId) {
-      return $this->db->query(" 
-      SELECT 
-        c.id as cart_id
-        , c.user_id as user_id
-        , SUM(ifnull(ci.quantity, 0)) as num_products
-        , sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
-            CAST((p.price - (p.price * p.sconto) / 100) AS DECIMAL(8,2)) 
-            ,ifnull(p.price, 0))) 
-          as total
-        , IFNULL(s.id, 0) as shipment_id
-        , IFNULL(s.price, 0) as shipment_price
-      FROM 
-        cart as c
-        INNER JOIN cart_item as ci
-          ON c.id = ci.cart_id
-        INNER JOIN product as p
-          ON ci.product_id = p.id
-        LEFT JOIN shipment s
-          ON s.id = c.shipment_id
-      WHERE
-        $cartId = c.id;");
+      $total = $this->db->query(" 
+        SELECT 
+          c.id as cart_id
+          , c.user_id as user_id
+          , SUM(ifnull(ci.quantity, 0)) as num_products
+          , sum(ifnull(ci.quantity,0) * IF(p.sconto>0 AND data_inizio_sconto <= DATE(NOW()) AND data_fine_sconto >= DATE(NOW()),
+              CAST((p.price - (p.price * p.sconto) / 100) AS DECIMAL(8,2)) 
+              ,ifnull(p.price, 0))) 
+            as total
+          , IFNULL(s.id, 0) as shipment_id
+          , IFNULL(s.price, 0) as shipment_price
+        FROM 
+          cart as c
+          INNER JOIN cart_item as ci
+            ON c.id = ci.cart_id
+          INNER JOIN product as p
+            ON ci.product_id = p.id
+          LEFT JOIN shipment s
+            ON s.id = c.shipment_id
+        WHERE
+          $cartId = c.id;"
+      );
+
+      $pm = new ProfileManager();
+      $userDiscount = $pm->GetUserDiscount();
+      if ($userDiscount > 0){
+        foreach($total as $i => $tot){
+          $tot['total'] = number_format($tot['total'] - (($tot['total'] * $userDiscount)/100), 2, '.', '') ;
+          array_splice($total, $i, 1, [$i => $tot]);
+        }
+      }
+
+      return $total;
     }
 
     public function getCartItems($cartId){
@@ -543,7 +568,7 @@
     }
 
     private function _getCartItems($cartId) {
-      return $this->db->query("
+      $cartItems = $this->db->query("
         SELECT 
           c.id as cart_id
           , ci.id as cart_item_id
@@ -568,6 +593,18 @@
           ifnull($cartId, 0) = 0
           OR $cartId = c.id;
       ");
+
+      $pm = new ProfileManager();
+      $userDiscount = $pm->GetUserDiscount();
+      if ($userDiscount > 0){
+        foreach($cartItems as $i => $ci){
+          $ci['single_price'] = number_format($ci['single_price'] - (($ci['single_price'] * $userDiscount)/100), 2, '.', '') ;
+          $ci['total_price'] = number_format($ci['total_price'] - (($ci['total_price'] * $userDiscount)/100), 2, '.', '');
+          array_splice($cartItems, $i, 1, [$i => $ci]);
+        }
+      }
+
+      return $cartItems;
     }
 
   }

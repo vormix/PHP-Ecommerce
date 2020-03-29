@@ -27,8 +27,7 @@
 
   $pm = new ProductManager();
   $product = $pm->GetProductWithImages($id);
-  $discPrice = $pm->getDiscountedPrice($id);
-  $lineThrough = $discPrice ? 'text-muted line-through' : '';
+  $lineThrough = $product->disc_price ? 'text-muted line-through' : '';
  // var_dump($product); die;
   if ($product->id == 0) {
     echo "<script>location.href='".ROOT_URL."shop?page=products-list&msg=not_found';</script>";
@@ -42,9 +41,9 @@
   <p class="lead <?php echo $lineThrough ?>">
     Prezzo: <?php echo esc_html($product->price); ?> €
   </p>
-  <?php if ($discPrice): ?>
+  <?php if ($product->disc_price): ?>
   <span class="lead badge-pill badge-warning">
-    Prezzo Scontato: <?php echo esc_html(number_format((float)$discPrice, 2, '.', '')); ?> €
+    Prezzo Scontato: <?php echo esc_html($product->disc_price); ?> €
   </span>
   <br>
   <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge-pill badge-warning"></span>

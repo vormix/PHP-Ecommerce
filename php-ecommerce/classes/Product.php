@@ -32,14 +32,26 @@ class ProductImageManager extends DBManager {
   }
 
   public function getImages($productId) {
-    $images = parent::getAll();
-    
-    foreach($images as $imgKey => $imgVal){
-      
-      if ($imgVal->product_id != $productId) {
-        unset($images[$imgKey]);
+    // $images = parent::getAll();
+    $imgsArr = $this->db->query("
+      SELECT *
+      FROM product_images
+      WHERE product_id = $productId;
+    ");
+
+    $images = [];
+    if ($imgsArr) {
+      foreach($imgsArr as $img){
+        array_push($images, (object) $img);
       }
     }
+    
+    // foreach($images as $imgKey => $imgVal){
+      
+    //   if ($imgVal->product_id != $productId) {
+    //     unset($images[$imgKey]);
+    //   }
+    // }
     return $images;
   }
 }
@@ -122,7 +134,11 @@ class ProductManager extends DBManager {
   }
 
   public function GetProductWithImages($productId) {
-    $product = $this->get($productId);
+    $product = $this->_getProducts(0, $productId);
+    if (!$product) {
+      return NULL;
+    }
+    $product = $product[0];
     //var_dump($product); die;
     $imgMgr = new ProductImageManager();
     $images = $imgMgr->getImages($productId);
@@ -131,48 +147,31 @@ class ProductManager extends DBManager {
   }
 
   public function GetProducts($categoryId) {
-    if ($categoryId == 0)
-      $products = parent::getAll();
-    else {
-        $products = $this->_getProductsInCategory($categoryId);
-    }
+    return $this->_getProducts($categoryId);
+  }
+
+  private function _getProducts($categoryId = 0, $productId = 0, $search = '', $limit = '') {
+
+    $products = $this->_getProductsQuery($categoryId, $productId, $search, $limit);
     
-   // echo $r . $secs . ' Sec';die;
-    foreach($products as $product){
-      
+    foreach($products as $product){    
       $product->disc_price = NULL;
       if ($product->sconto != "0" && $product->data_inizio_sconto <= date('Y-m-d') && $product->data_fine_sconto >= date('Y-m-d')){
         $product->disc_price = $product->price - (($product->price * $product->sconto)/100.0);
-        $secs ='';
-        $days ='';
-        $hours='';
-        $minutes='';
-        $secs =strtotime($product->data_fine_sconto) - strtotime(date("Y-m-d H:s:i")) ;
-        $r = '';
-        if ($secs >= 86400) {
-          $days = floor($secs/86400);
-          $secs = $secs%86400;
-          $r .= $days . ' gg';
-          if ($secs > 0) $r .= '- ';
-        }
-        if ($secs >= 3600) {
-          $hours = floor($secs/3600);
-          $secs = $secs%3600;
-          $r .= $hours . ' hh';
-          if ($secs > 0) $r .= '- ';
-        }
-        if ($secs>=60) {
-          $minutes = floor($secs/60);
-          $secs = $secs%60;
-          $r .= $minutes . ' mm';
-          if ($secs > 0) $r .= '- ';
-        }
-        
-        $product->remaining_time=$r . $secs . ' Sec';
       } 
+    }
     
-    //var_dump($products);
-  }
+    $pm = new ProfileManager();
+    $userDiscount = $pm->GetUserDiscount();
+    if ($userDiscount > 0)  {
+      foreach($products as $product){
+        $product->price = number_format(($product->price - (($product->price * $userDiscount)/100)), 2, '.', '');
+        if ( $product->disc_price != NULL) {
+          $product->disc_price = number_format(($product->disc_price - (($product->disc_price * $userDiscount)/100)), 2, '.', '');
+        }
+      }
+    }    
+
     return $products;
   }
 
@@ -197,35 +196,48 @@ class ProductManager extends DBManager {
   }
 
   public function SearchProducts($search) {
-    return $this->db->query("
-    SELECT
-      p.id as id
-      , p.name as name
-      , c.name as category
-      , IF(p.sconto > 0 AND p.data_inizio_sconto <= DATE(NOW()) AND p.data_fine_sconto >= DATE(NOW()),
-          CAST((p.price -(p.price * p.sconto)/100) AS DECIMAL(8,2)) 
-          ,ifnull(p.price, 0))AS price
-      , IFNULL(
-          (
-            SELECT product_images.id
-            FROM product_images 
-            WHERE product_id = p.id
-            ORDER BY ifnull(product_images.order_number, 99) 
-            LIMIT 1
-          )
-        , 0) AS image_id
-    FROM
-      product p
-      LEFT JOIN category c
-      ON p.category_id = c.id
-    WHERE
-      p.name like '%$search%'
-      OR
-      p.description like '%$search%'
-      OR
-      c.name like '%$search%'
-    LIMIT 5;
-    ");
+
+    $products = $this->_getProducts(0, 0, $search, 5);
+    if (!$products) {
+      return [];
+    }
+
+    $imgMgr = new ProductImageManager();
+    foreach($products as $product) {
+      $images = $imgMgr->getImages($product->id);
+      $product->image_id = count($images) > 0 ? $images[0]->id : "0";
+    }
+
+    return $products;
+    // return $this->db->query("
+    // SELECT
+    //   p.id as id
+    //   , p.name as name
+    //   , c.name as category
+    //   , IF(p.sconto > 0 AND p.data_inizio_sconto <= DATE(NOW()) AND p.data_fine_sconto >= DATE(NOW()),
+    //       CAST((p.price -(p.price * p.sconto)/100) AS DECIMAL(8,2)) 
+    //       ,ifnull(p.price, 0))AS price
+    //   , IFNULL(
+    //       (
+    //         SELECT product_images.id
+    //         FROM product_images 
+    //         WHERE product_id = p.id
+    //         ORDER BY ifnull(product_images.order_number, 99) 
+    //         LIMIT 1
+    //       )
+    //     , 0) AS image_id
+    // FROM
+    //   product p
+    //   LEFT JOIN category c
+    //   ON p.category_id = c.id
+    // WHERE
+    //   p.name like '%$search%'
+    //   OR
+    //   p.description like '%$search%'
+    //   OR
+    //   c.name like '%$search%'
+    // LIMIT 5;
+    // ");
   }
 
   public function getDiscountedPrice($productId){
@@ -253,13 +265,41 @@ class ProductManager extends DBManager {
     $this->db->query("DELETE FROM product_images WHERE product_id = $productId");
   }
 
-  private function _getProductsInCategory($categoryId) {
+  private function _getProductsQuery($categoryId = 0, $productId = 0, $search = '', $limit = '') {
+
+    if ($limit != '') {
+      $limit = "LIMIT $limit";
+    }
+
+    if ($search != '') {
+      $search = "
+        AND
+        (
+          p.name like '%$search%'
+          OR
+          c.name like '%$search%'
+        )
+      ";
+    }
+
+    $query = "
+      SELECT 
+        p.*
+        , c.name as category
+      FROM 
+        product p
+        INNER JOIN category c
+          ON P.CATEGORY_ID = c.id
+      WHERE  
+        ($categoryId = 0 OR p.category_id = $categoryId)
+        AND
+        ($productId = 0 OR p.id = $productId)
+      $search
+      $limit;
+    ";
+
     $productsObjArr = [];
-    $products = $this->db->query("
-      SELECT *
-      FROM product
-      WHERE  category_id = $categoryId;
-    ");
+    $products = $this->db->query($query);
     if ($products){
       foreach($products as $product){
         array_push($productsObjArr, (object) $product);

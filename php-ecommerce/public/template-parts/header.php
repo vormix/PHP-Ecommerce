@@ -89,6 +89,12 @@ global $loggedInUser;
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=shipment">Aggiungi Spedizione</a>
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=shipment-list">Lista Spedizioni</a>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=special-treatment">Aggiungi Trattamento Speciale</a>
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=special-treatments-list">Lista Trattamenti Speciali</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=profile">Aggiungi Profilo</a>
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=profiles-list">Lista Profili</a>
+              <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=user">Aggiungi Utente</a>
               <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin?page=users-list">Lista Utenti</a>
               <div class="dropdown-divider"></div>

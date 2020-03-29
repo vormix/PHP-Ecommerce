@@ -8,6 +8,9 @@ global $alertMsg;
 $mgr = new UserManager();
 $user = new User(0, '', '', '', '');
 
+$pm = new ProfileManager();
+$profiles = $pm->getAll();
+
 $lblAction = 'Aggiungi';
 $submit = 'add';
 
@@ -28,10 +31,11 @@ if (isset($_POST['add'])) {
   $last_name  = trim($_POST['last_name']);
   $email      = trim($_POST['email']);
   $user_type  = trim($_POST['user_type']);
+  $profile_id  = (int) trim($_POST['profile_id']);
 
   if ($first_name != '' && $last_name != '' && $email != '' && $user_type != '') {
 
-    $id = $mgr->createUser(new User(0, $first_name, $last_name, $email, $user_type), null);
+    $id = $mgr->createUser(new User(0, $first_name, $last_name, $email, $user_type, $profile_id), null);
       
     if ($id > 0) {
       echo "<script>location.href='".ROOT_URL."admin?page=users-list&msg=created';</script>";
@@ -51,11 +55,13 @@ if (isset($_POST['update'])) {
   $last_name    = trim($_POST['last_name']);
   $email        = trim($_POST['email']);
   $user_type    = trim($_POST['user_type']);
+  $profile_id  = (int) trim($_POST['profile_id']);
+
   $id           = trim($_POST['id']);
 
   if ($id != '' && $id != '0' && $first_name != '' && $last_name != '' && $email != '' && $user_type != '') {
 
-    $numUpdated = $mgr->update(new User($id, $first_name, $last_name, $email, $user_type), $id);
+    $numUpdated = $mgr->update(new User($id, $first_name, $last_name, $email, $user_type, $profile_id), $id);
 
     if ($numUpdated > 0) {
       echo "<script>location.href='".ROOT_URL."admin?page=users-list&msg=updated';</script>";
@@ -94,6 +100,18 @@ if (isset($_POST['update'])) {
       <option <?php if ($user->user_type == 'regular' ) echo 'selected' ; ?> value="regular">Regolare</option>
     </select>
   </div>
+  <div class="form-group">
+    <label for="user_type">Profilo</label>
+    <select name="profile_id" id="profile_id" type="text" class="form-control" value="<?php echo esc_html($user->profile_id); ?>">
+      <option value="0"> - Scegli una profilo - </option>
+      <?php if (count($profiles) > 0) : ?>
+        <?php foreach ($profiles as $profile) : ?>
+          <option <?php if ($user->profile_id == $profile->id ) echo 'selected' ; ?> value="<?php echo esc_html($profile->id); ?>"><?php echo esc_html($profile->name); ?></option>
+        <?php endforeach ; ?>
+      <?php endif ; ?>
+    </select>
+  </div>
+
   <input type="hidden" name="id" value="<?php echo esc_html($user->id); ?>">
   <input name="<?php echo esc_html($submit); ?>" type="submit" class="btn btn-primary" value="<?php echo esc_html($lblAction); ?> Utente">
 </form>

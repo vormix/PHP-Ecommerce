@@ -16,11 +16,16 @@
 
   $status = 'payed';
   $payedOrders = $orderMgr->getOrdersOfUser($userId, $status);
+
+  $status = 'delayed';
+  $delayedOrders = $orderMgr->getOrdersOfUser($userId, $status);
+
   $status = 'shipped';
   $shippedOrders = $orderMgr->getOrdersOfUser($userId, $status);
 
   $status = 'pending';
   $pendingOrders = $orderMgr->getOrdersOfUser($userId, $status);
+
   $status = 'canceled';
   $canceledOrders = $orderMgr->getOrdersOfUser($userId, $status);
 
@@ -56,6 +61,37 @@
 </table>
 <?php else: ?>
   <p>Non hai alcun ordine pagato.</p>
+<?php endif; ?>
+
+<hr>
+
+<?php if (count($delayedOrders) > 0) :  ?>
+  <h4 class="mb-3">Ordini Pagamento Postumo</h4>
+  <table class="table table-bordered">
+    <tr>
+      <th class="big-screen">#</th>
+      <th>Num.Ordine</th>
+      <th>Data</th>
+      <th>Link</th>
+      <th class="text-center">PDF</th>
+    </tr>
+  <?php foreach ($delayedOrders as $order) : $count++; ?>
+  
+    <tr class="text-primary">
+      <td class="big-screen"><?php echo $count; ?></td>
+      <td><?php echo esc_html($order['order_id']); ?></td>
+      <td><?php echo esc_html($order['created_date']); ?></td>
+      <td>
+        <a class="underline" href="<?php echo ROOT_URL . 'shop?page=view-order&id=' . esc_html($order['order_id']); ?>">Vedi &raquo;</a>
+      </td>
+      <td class="text-center">
+        <a target="_blank" href="<?php echo ROOT_URL . 'shop/invoices/print-invoice.php?orderId=' . esc_html($order['order_id']); ?>" title="stampa PDF" class="btn btn-lg btn-link p-0"><i class="fas fa-file-pdf"></i></a>
+      </td>
+    </tr>
+  <?php endforeach; $count=0; ?>
+</table>
+<?php else: ?>
+  <p>Non hai alcun ordine pagamento postumo.</p>
 <?php endif; ?>
 
 <hr>

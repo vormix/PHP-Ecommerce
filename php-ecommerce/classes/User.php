@@ -7,13 +7,15 @@
     public $last_name;
     public $email;
     public $user_type;
+    public $profile_id;
 
-    public function __construct($id, $first_name, $last_name, $email, $user_type) {
+    public function __construct($id, $first_name, $last_name, $email, $user_type, $profile_id = NULL) {
       $this->id = (int)$id;
       $this->first_name = $first_name;
       $this->last_name = $last_name;
       $this->email = $email;
       $this->user_type = $user_type;
+      $this->profile_id = $profile_id;
     }
 
     public static function generatePassword(){
@@ -26,7 +28,7 @@
     public function __construct(){
       parent::__construct();
       $this->tableName = 'user';
-      $this->columns = array('id', 'email', 'first_name', 'last_name', 'user_type');
+      $this->columns = array('id', 'email', 'first_name', 'last_name', 'user_type', 'profile_id');
     }
 
     public function guidExists($guid) {
@@ -75,7 +77,7 @@
       $isPasswordCorrect = password_verify($password, $existingHashFromDb);
 
       if ($isPasswordCorrect) {
-        return new User($user['id'], $user['first_name'], $user['last_name'], $user['email'], $user['user_type']);
+        return new User($user['id'], $user['first_name'], $user['last_name'], $user['email'], $user['user_type'], $user['profile_id']);
       } else {
         return false;
       }
@@ -153,7 +155,7 @@
 
     private function _getUserByEmail($email){
       $email = esc($email);      
-      $query = "SELECT id, email, first_name, last_name, user_type FROM " . $this->tableName . " WHERE email = '$email';";
+      $query = "SELECT id, email, first_name, last_name, user_type, profile_id FROM " . $this->tableName . " WHERE email = '$email';";
       $user = $this->db->query($query);
       if (count($user) == 0) {
         return null;

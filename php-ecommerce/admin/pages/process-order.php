@@ -91,14 +91,16 @@ $count = 0;
     'pending'   => 'In attesa',
     'payed'     => 'Pagato',
     'canceled'  => 'Annullato',
-    'shipped'   => 'Spedito'
+    'shipped'   => 'Spedito',
+    'delayed'   => 'Pagamento Postumo',  
   ];
 
   $cssClass = [
     'pending'   => 'secondary',
     'payed'     => 'primary',
     'canceled'  => 'danger',
-    'shipped'   => 'success'
+    'shipped'   => 'success',
+    'delayed'   => 'info',
   ];
   ?>
   <tr> 
@@ -120,6 +122,12 @@ $count = 0;
       <hr>
       <form method="post" class="inline right">
         <input onclick="return confirm('Confermi ripristino prodotti ordine n. #<?php echo esc_html($orderId); ?> ?');" name="restore_order" type="submit" class="btn btn-danger m-0" value="Ripristina prodotti">
+      </form>
+      <?php endif; ?>
+      <?php if ($status == 'delayed' ) : ?>
+      <hr>
+      <form method="post" class="inline right">
+        <button onclick="return confirm('Confermi ordine n. #<?php echo esc_html($orderId); ?> pagato?');" name="pay_order" type="button" class="btn btn-info m-0" >Pagato &raquo;</button>
       </form>
       <?php endif; ?>
     </th>

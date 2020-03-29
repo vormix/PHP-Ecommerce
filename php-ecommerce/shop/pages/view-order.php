@@ -68,14 +68,16 @@
     'pending'   => 'In attesa',
     'payed'     => 'Pagato',
     'canceled'  => 'Annullato',
-    'shipped'   => 'Spedito'
+    'shipped'   => 'Spedito',
+    'delayed'   => 'Pagamento Postumo',  
   ];
 
   $cssClass = [
     'pending'   => 'secondary',
     'payed'     => 'primary',
     'canceled'  => 'danger',
-    'shipped'   => 'success'
+    'shipped'   => 'success',
+    'delayed'   => 'info',
   ];
   ?>
   <tr> 
