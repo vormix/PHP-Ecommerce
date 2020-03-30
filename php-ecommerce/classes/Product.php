@@ -289,7 +289,7 @@ class ProductManager extends DBManager {
       FROM 
         product p
         INNER JOIN category c
-          ON P.category_id = c.id
+          ON p.category_id = c.id
       WHERE  
         ($categoryId = 0 OR p.category_id = $categoryId)
         AND
