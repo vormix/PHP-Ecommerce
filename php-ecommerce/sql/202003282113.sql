@@ -1,0 +1,1 @@
+ALTER TABLE category ADD description LONGTEXT NULL AFTER name, ADD metadesc TEXT NULL AFTER description; 

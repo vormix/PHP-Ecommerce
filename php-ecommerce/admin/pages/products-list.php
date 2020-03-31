@@ -51,7 +51,7 @@ $products = $mgr->getAll();
         $active = 'active';
             foreach ($proimg->images as $image){
             echo '<div class="carousel-item '.$active.'">';
-            echo '<img class="thumbnail" src="'.ROOT_URL . '/images/' . $proimg->id . '/' . $image->id . '.' . $image->image_extension.'" >
+            echo '<img class="thumbnail" src="'.ROOT_URL . '/images/' . $proimg->id . '/' . $image->id . '_thumbnail.' . $image->image_extension.'" >
                   </div>';
             $active='';
 

@@ -146,6 +146,16 @@ class ProductManager extends DBManager {
     return $product;
   }
 
+  public function GetProductSubcategories($productId){
+    $product = $this->get($productId);
+    if (!$product) {
+      return [];
+    }
+    $cm = new CategoryManager();
+    $subcats = $cm->GetCategoriesAndSubs($product->category_id, $productId);
+    return $subcats;
+  }
+
   public function GetProducts($categoryId) {
     return $this->_getProducts($categoryId);
   }
@@ -209,35 +219,6 @@ class ProductManager extends DBManager {
     }
 
     return $products;
-    // return $this->db->query("
-    // SELECT
-    //   p.id as id
-    //   , p.name as name
-    //   , c.name as category
-    //   , IF(p.sconto > 0 AND p.data_inizio_sconto <= DATE(NOW()) AND p.data_fine_sconto >= DATE(NOW()),
-    //       CAST((p.price -(p.price * p.sconto)/100) AS DECIMAL(8,2)) 
-    //       ,ifnull(p.price, 0))AS price
-    //   , IFNULL(
-    //       (
-    //         SELECT product_images.id
-    //         FROM product_images 
-    //         WHERE product_id = p.id
-    //         ORDER BY ifnull(product_images.order_number, 99) 
-    //         LIMIT 1
-    //       )
-    //     , 0) AS image_id
-    // FROM
-    //   product p
-    //   LEFT JOIN category c
-    //   ON p.category_id = c.id
-    // WHERE
-    //   p.name like '%$search%'
-    //   OR
-    //   p.description like '%$search%'
-    //   OR
-    //   c.name like '%$search%'
-    // LIMIT 5;
-    // ");
   }
 
   public function getDiscountedPrice($productId){
