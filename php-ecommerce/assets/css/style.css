@@ -183,3 +183,12 @@ ol.carousel-indicators li {
 #products-table tr {
   margin: 0;
 }
+#products-table .product-card li.list-group-item {
+  padding: 10px
+}
+
+#products-table th.sorting, #products-table th.sorting_desc,  #products-table th.sorting_asc {
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+  border-radius: 30px;
+}

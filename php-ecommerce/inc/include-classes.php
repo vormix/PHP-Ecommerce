@@ -12,6 +12,7 @@
   require_once ROOT_PATH . 'classes/Shipment.php';
   require_once ROOT_PATH . 'classes/SpecialTreatment.php';
   require_once ROOT_PATH . 'classes/Profile.php';
+  require_once ROOT_PATH . 'classes/Email.php';
   require_once ROOT_PATH . 'classes/utilities/ImageUtilities.php';
   require_once ROOT_PATH . 'classes/utilities/PdfUtilities.php';
   require_once ROOT_PATH . 'classes/utilities/Utilities.php';

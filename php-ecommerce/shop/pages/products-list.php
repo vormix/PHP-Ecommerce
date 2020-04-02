@@ -81,12 +81,14 @@
 <?php if (count($products) > 0) : ?>
 <p class="lead">Di seguito la lista dei nostri prodotti in vendita...</p>
 
-<table id="products-table" class="table">
+<table id="products-table" class="table mt-5">
   <thead>
     <tr>
       <th>Nome</th>
-      <th>Dettagli</th>
-      <th>Azioni</th>
+      <th style="visibility:hidden;">Dettagli</th>
+      <th style="visibility:hidden;">Azioni</th>
+      <th>Prezzo</th>
+      <th>Con Sconto</th>
     </tr>
   </thead>
   <tbody>
@@ -135,6 +137,8 @@
           </div>
         </div>
       </td>
+      <td style="visibility:hidden;"><?php echo esc_html($product->price); ?></td>
+      <td style="visibility:hidden;"><?php echo esc_html(isset($product->disc_price) ? '1' : '0'); ?></td>
     </tr>
     <?php endforeach; ?>
     <tbody>
@@ -143,18 +147,32 @@
   <p>Nessun prodotto disponibile...</p>
 <?php endif;?>
 
+<style>
+#products-table thead {
+  position: absolute;
+  top: -50px;
+}
+</style>
+
 <script>
 var $document = $(document);
 var $productsTable = $('#products-table');
 
 $document.ready(function(){
 
-    $productsTable.DataTable({
+    var dt = $productsTable.DataTable({
       bLengthChange: false,
-      pageLength: 20
+      pageLength: 20,
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Cerca un prodotto..."
+    }
     });
     $productsTable.addClass('cards');
-    $productsTable.find('thead').hide();
+    // $productsTable.find('thead').hide();
+
+    var data = dt .order( [ 3, 'desc' ])
+                  .draw();
 
     $.each($document.find('.countdown'), (i, item) => {
       countdown(item);
