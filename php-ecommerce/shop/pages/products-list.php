@@ -36,59 +36,25 @@
   
 ?>
 
-<style>
-  .cards tbody tr {
-    float: left;
-    width: 20rem;
-    margin: 0.5rem;
-    border: 0.0625rem solid rgba(0,0,0,.125);
-    border-radius: .25rem;
-    box-shadow: 0.25rem 0.25rem 0.5rem rgba(0,0,0,0.25);
-  }
-  .cards tbody td {
-      display: block;
-  }
-  .table tbody label {
-      display: none;
-  }
-  .cards tbody label {
-    display: inline;
-    position: relative;
-    font-size: 85%;
-    top: -0.5rem;
-    float: left;
-    color: #808080;
-    min-width: 4rem;
-    margin-left: 0;
-    margin-right: 1rem;
-    text-align: left;
-  }
-  tr.selected label {
-      color: #404040;
-  }
-
-  .table .fa {
-      font-size: 2.5rem;
-      text-align: center;
-  }
-  .cards .fa {
-      font-size: 7.5rem;
-  }
-</style>
-
 <h1>Lista Prodotti</h1>
 
 <?php if (count($products) > 0) : ?>
 <p class="lead">Di seguito la lista dei nostri prodotti in vendita...</p>
 
-<table id="products-table" class="table mt-5">
+<div id="spinner" class="d-flex justify-content-center">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Caricamento...</span>
+  </div>
+</div>
+
+<table id="products-table" class="table mt-5" style="display:none;">
   <thead>
     <tr>
       <th>Nome</th>
       <th style="visibility:hidden;">Dettagli</th>
       <th style="visibility:hidden;">Azioni</th>
-      <th>Prezzo</th>
-      <th>Con Sconto</th>
+      <th class="sort-toggle">Prezzo</th>
+      <th class="sort-toggle">Con Sconto</th>
     </tr>
   </thead>
   <tbody>
@@ -115,8 +81,9 @@
             <?php echo substr(esc_html($product->description), 0, 50); ?>
             <br>
             <?php if ($product->disc_price) : ?>
-              <span class="badge-pill badge-warning">Prezzo speciale <?php echo esc_html(number_format((float)$product->disc_price, 2, '.', '')); ?> €</span>
+              <span class="badge badge-pill badge-warning">Prezzo speciale <?php echo esc_html(number_format((float)$product->disc_price, 2, '.', '')); ?> €</span>
               <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge badge-pill badge-warning"></span>          
+              <br>
             <?php endif ?>
             <span class="badge badge-pill badge-info" ><?php echo $qta;  ?></span>
           
@@ -139,6 +106,7 @@
       </td>
       <td style="visibility:hidden;"><?php echo esc_html($product->price); ?></td>
       <td style="visibility:hidden;"><?php echo esc_html(isset($product->disc_price) ? '1' : '0'); ?></td>
+
     </tr>
     <?php endforeach; ?>
     <tbody>
@@ -147,16 +115,10 @@
   <p>Nessun prodotto disponibile...</p>
 <?php endif;?>
 
-<style>
-#products-table thead {
-  position: absolute;
-  top: -50px;
-}
-</style>
-
 <script>
 var $document = $(document);
 var $productsTable = $('#products-table');
+var $spinner = $('#spinner');
 
 $document.ready(function(){
 
@@ -166,13 +128,13 @@ $document.ready(function(){
       language: {
         search: "_INPUT_",
         searchPlaceholder: "Cerca un prodotto..."
-    }
+      },
+      initComplete: function(settings, json) {
+        $productsTable.show();
+        $spinner.remove();
+      }
     });
     $productsTable.addClass('cards');
-    // $productsTable.find('thead').hide();
-
-    var data = dt .order( [ 3, 'desc' ])
-                  .draw();
 
     $.each($document.find('.countdown'), (i, item) => {
       countdown(item);
