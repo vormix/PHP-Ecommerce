@@ -17,12 +17,13 @@
   $categories=$cm->GetCategories();
 
 ?>
+
 <a href="<?php echo ROOT_URL . 'admin?page=category'; ?>" class="btn btn-primary mb-3">Aggiungi Categoria</a>
 
 <h1>Elenco Categorie</h1>
 
 <?php if (count($categories) > 0) : ?>
-<table class="table table-hover">
+<table id="table" class="table table-hover">
   <thead>
     <tr>
       <th scope="col">Nome</th>
@@ -48,3 +49,11 @@
   <p>Nessuna Categoria presente...</p>
 <?php endif ; ?>
 
+<script>
+ $(document).ready(function() {
+    $('#table').DataTable({
+      bLengthChange: false
+    });
+});
+
+</script>

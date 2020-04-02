@@ -28,11 +28,12 @@ $products = $mgr->getAll();
 <h1>Elenco Prodotti</h1>
 
 <?php if (count($products) > 0) : ?>
-<table class="table table-hover">
+<table id="table" class="table table-hover">
   <thead>
     <tr>
       <th scope="col">Immagini</th>
       <th scope="col" class="big-screen">Titolo</th>
+      <th scope="col" class="big-screen">Categoria</th>
       <th scope="col">Prezzo</th>
       <th scope="col" class="right">Azioni</th>
     </tr>
@@ -90,3 +91,13 @@ $products = $mgr->getAll();
 <?php else : ?>
   <p>Nessun Prodotto presente...</p>
 <?php endif ; ?>
+
+<script>
+ $(document).ready(function() {
+    $('#table').DataTable({
+      bLengthChange: false,
+      pageLength: 4
+    });
+    $('.dataTables_scrollBody').css('height', '400px');
+} );
+</script>

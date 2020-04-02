@@ -88,7 +88,9 @@ class Category {
             AND ($productId = 0 OR prod_subcats.product_id = $productId)
         WHERE 
           parent_cat.parent_id IS NULL
-          $filter;
+          $filter
+        ORDER BY
+        parent_cat.name;
       ");
 
       if (!$categoriesArr){

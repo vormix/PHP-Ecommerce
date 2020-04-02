@@ -148,7 +148,7 @@ class ProductManager extends DBManager {
 
   public function GetProductSubcategories($productId){
     $product = $this->get($productId);
-    if (!$product) {
+    if (!isset($product->id)) {
       return [];
     }
     $cm = new CategoryManager();

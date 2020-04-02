@@ -27,7 +27,7 @@
 <h1>Elenco Trattamenti Speciali</h1>
 
 <?php if (count($specialTreatments) > 0) : ?>
-<table class="table table-hover">
+<table id="table" class="table table-hover">
   <thead>
     <tr>
       <th scope="col">Nome</th>
@@ -59,3 +59,10 @@
   <p>Nessun Trattamento speciale presente...</p>
 <?php endif ; ?>
 
+<script>
+ $(document).ready(function() {
+    $('#table').DataTable({
+      bLengthChange: false
+    });
+} );
+</script>

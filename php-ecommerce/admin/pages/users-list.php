@@ -23,7 +23,7 @@ $users = $mgr->getAll();
 <h1>Elenco Utenti</h1>
 
 <?php if (count($users) > 0) : ?>
-<table class="table table-hover">
+<table id="table" class="table table-hover">
   <thead>
     <tr>
       <th scope="col" class="big-screen">Nominativo</th>
@@ -52,3 +52,11 @@ $users = $mgr->getAll();
 <?php else : ?>
   <p>Nessun Utente presente...</p>
 <?php endif ; ?>
+
+<script>
+ $(document).ready(function() {
+    $('#table').DataTable({
+      bLengthChange: false
+    });
+} );
+</script>

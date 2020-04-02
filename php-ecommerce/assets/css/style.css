@@ -165,3 +165,21 @@ ol.carousel-indicators li {
 .caret {
   cursor: pointer;
 }
+.mail-to {
+  margin-right: 20px;
+}
+.pointer {
+  cursor: pointer;
+}
+.height-auto {
+  height: auto;
+}
+
+/* DataTable Products List */
+#products-table td {
+  padding: 0;
+}
+
+#products-table tr {
+  margin: 0;
+}
