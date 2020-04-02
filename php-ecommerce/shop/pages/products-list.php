@@ -51,8 +51,8 @@
   <thead>
     <tr>
       <th>Nome</th>
-      <th style="visibility:hidden;">Dettagli</th>
-      <th style="visibility:hidden;">Azioni</th>
+      <th class="visibility-hidden">Dettagli</th>
+      <th class="visibility-hidden">Azioni</th>
       <th class="sort-toggle">Prezzo</th>
       <th class="sort-toggle">Con Sconto</th>
     </tr>
@@ -104,8 +104,8 @@
           </div>
         </div>
       </td>
-      <td style="visibility:hidden;"><?php echo esc_html($product->price); ?></td>
-      <td style="visibility:hidden;"><?php echo esc_html(isset($product->disc_price) ? '1' : '0'); ?></td>
+      <td class="visibility-hidden"><?php echo esc_html($product->price); ?></td>
+      <td class="visibility-hidden"><?php echo esc_html(isset($product->disc_price) ? '1' : '0'); ?></td>
 
     </tr>
     <?php endforeach; ?>
@@ -132,6 +132,7 @@ $document.ready(function(){
       initComplete: function(settings, json) {
         $productsTable.show();
         $spinner.remove();
+        $productsTable.find('th.visibility-hidden').hide();
       }
     });
     $productsTable.addClass('cards');

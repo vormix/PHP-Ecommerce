@@ -175,6 +175,10 @@ ol.carousel-indicators li {
   height: auto;
 }
 
+.visibility-hidden {
+  visibility: hidden;
+}
+
 /* DataTable Products List */
 #products-table td {
   padding: 0;
@@ -252,8 +256,8 @@ ol.carousel-indicators li {
       width: 100%;
       height:40px;
   }
-  #products-table thead th.sort-toggle {
+  /* #products-table thead th.sort-toggle {
     left: -200px;
   }
-  
+   */
 }
