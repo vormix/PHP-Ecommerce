@@ -58,6 +58,9 @@
     </tr>
   </thead>
   <tbody>
+    <?php
+    $i = 1;
+    ?>
     <?php foreach($products as $product) : ?>
       <?php 
       if($product->qta <= 1){
@@ -69,7 +72,7 @@
         $qta="Qta: <span class='qta'>".$product->qta . "</span>";
       }
       ?>
-    <tr class="product-card card mb-3 col-md-3 col-6" >
+    <tr class="product-card card mb-3 col-xl-4 col-6" >
       <td>
         <div class="card-header bg-dark text-light rounded-0">
           <?php echo esc_html($product->name); ?>
@@ -77,22 +80,46 @@
       </td>
       <td>
         <ul class="list-group list-group-flush">
+          <li class="list-group-item p-0">
+          <div id="carousel-<?php echo $i ?>" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                  <img src="<?php echo ROOT_URL ?>/images/285/190_thumbnail.jpg" class="d-block w-100">
+              </div>
+              <div class="carousel-item">
+                <img src="<?php echo ROOT_URL ?>/images/285/191_thumbnail.jpg" class="d-block w-100">
+              </div>
+              <div class="carousel-item">
+                <img src="<?php echo ROOT_URL ?>/images/285/1191_thumbnail.jpg" class="d-block w-100">
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carousel-<?php echo $i ?>" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel-<?php echo $i ?>" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+
+          </li>
           <li class="list-group-item">
             <?php echo substr(esc_html($product->description), 0, 50); ?>
             <br>
             <?php if ($product->disc_price) : ?>
               <span class="badge badge-pill badge-warning">Prezzo speciale <?php echo esc_html(number_format((float)$product->disc_price, 2, '.', '')); ?> €</span>
+              <br>
               <span data-inizio-sconto="<?php echo esc_html($product->data_inizio_sconto); ?>" data-fine-sconto="<?php echo esc_html($product->data_fine_sconto); ?>" class="countdown badge badge-pill badge-warning"></span>          
               <br>
             <?php endif ?>
-            <span class="badge badge-pill badge-info" ><?php echo $qta;  ?></span>
-          
-            <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small>    
-                  
+            <span class="badge badge-pill badge-info" ><?php echo $qta;  ?></span>    
+                               
           </li>
         </ul>
       </td>
       <td>
+        <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small> 
         <div class="footer">
           <div class="product-actions">
             <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id); ?>'">Vedi</button>
@@ -108,6 +135,9 @@
       <td class="visibility-hidden"><?php echo esc_html(isset($product->disc_price) ? '1' : '0'); ?></td>
 
     </tr>
+    <?php
+    $i++;
+    ?>
     <?php endforeach; ?>
     <tbody>
 </table>
@@ -124,10 +154,11 @@ $document.ready(function(){
 
     var dt = $productsTable.DataTable({
       bLengthChange: false,
-      pageLength: 20,
+      pageLength: 18,
       language: {
         search: "_INPUT_",
-        searchPlaceholder: "Cerca un prodotto..."
+        searchPlaceholder: "Cerca un prodotto...",
+        sLengthMenu: "Visualizzati __"
       },
       initComplete: function(settings, json) {
         $productsTable.show();

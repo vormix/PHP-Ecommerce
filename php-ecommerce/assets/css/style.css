@@ -68,7 +68,7 @@ a.underline{
 .product-card {
   padding: 0;
   position: relative;
-  height: 250px;
+  height: 400px; 
 }
 .product-card .footer{
   position: absolute;
@@ -76,7 +76,7 @@ a.underline{
   width: 100%;
 }
 .product-card .list-group-item{
-  height: 200px;
+  max-height: 150px;
 }
 .product-card small {
   position: absolute;
@@ -188,7 +188,7 @@ ol.carousel-indicators li {
   margin: 0;
 }
 #products-table .product-card li.list-group-item {
-  padding: 10px
+  /* padding: 10px */
 }
 
 #products-table th.sorting, #products-table th.sorting_desc,  #products-table th.sorting_asc {
@@ -260,4 +260,11 @@ ol.carousel-indicators li {
     left: -200px;
   }
    */
+}
+
+.product-card .carousel {
+  height: 200px;
+}
+.product-card .list-group{
+  height: 300px;
 }
