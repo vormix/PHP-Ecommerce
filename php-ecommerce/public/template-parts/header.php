@@ -15,7 +15,14 @@ global $loggedInUser;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
   <title><?php echo SITE_NAME; ?></title>
+
+  <meta property="og:url" content="<?php echo ROOT_URL ?>shop/category12.html">
+  <meta property="og:image" content="<?php echo ROOT_URL ?>images/500/406_thumbnail.jpg">
+	<meta property="og:description" content="Test descrizione">
+	<meta property="og:title" content="PHP Ecommerce">
+
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/bootstrap.css">
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/style.css">
   <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
@@ -38,6 +45,16 @@ global $loggedInUser;
 
   <script>
   var rootUrl = '<?php echo ROOT_URL ?>';
+  </script>
+
+  <script>
+ (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "https://connect.facebook.net/en_IT/sdk.js#xfbml=1&version=v3.0";
+  fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk')); 
   </script>
 </head>
 
@@ -141,6 +158,10 @@ global $loggedInUser;
           </li>
         </ul>
         <?php endif; ?>
+
+        <div id="fb-root"></div>
+        <!-- Your share button code -->
+        <div class="fb-share-button" data-href="<?php echo ROOT_URL ?>shop/category12.html" data-layout="button_count"></div> 
 
         <form class="form-inline mt-2 mt-md-0" autocomplete="off">
           <input id="search" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">

@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^category([0-9]+)\.html$ index.php?page=products-list&categoryId=$1
