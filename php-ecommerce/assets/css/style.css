@@ -265,6 +265,9 @@ ol.carousel-indicators li {
 .product-card .carousel {
   height: 200px;
 }
+.product-card .carousel img {
+  min-height: 150px;
+}
 .product-card .list-group{
   height: 300px;
 }
