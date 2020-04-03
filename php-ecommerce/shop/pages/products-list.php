@@ -63,6 +63,8 @@
     ?>
     <?php foreach($products as $product) : ?>
       <?php 
+      $proimg = $pm->GetProductWithImages($product->id); 
+
       if($product->qta <= 1){
         $btn="disabled";
         $qta="Qta: Non Disp.";
@@ -80,32 +82,36 @@
       </td>
       <td>
         <ul class="list-group list-group-flush">
+          
           <li class="list-group-item p-0">
-          <div id="carousel-<?php echo $i ?>" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                  <img src="<?php echo ROOT_URL ?>/images/285/190_thumbnail.jpg" class="d-block w-100">
-              </div>
-              <div class="carousel-item">
-                <img src="<?php echo ROOT_URL ?>/images/285/191_thumbnail.jpg" class="d-block w-100">
-              </div>
-              <div class="carousel-item">
-                <img src="<?php echo ROOT_URL ?>/images/285/1191_thumbnail.jpg" class="d-block w-100">
-              </div>
-            </div>
-            <a class="carousel-control-prev" href="#carousel-<?php echo $i ?>" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carousel-<?php echo $i ?>" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
-          </div>
+            <?php if ($proimg->images) : ?>
+              <div id="carousel-<?php echo $i ?>" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                  <?php foreach($proimg->images as $index => $image) : ?>  
+                    <?php
+                    $active = $index == 0 ? 'active' : '';
+                    ?>
+                    <div class="carousel-item <?php echo $active ?>">
+                      <img src="<?php echo ROOT_URL ."images/" . $proimg->id . '/' . $image->id . '_thumbnail.' . $image->image_extension ?>" class="d-block w-100">
+                    </div>
+                  <?php endforeach; ?>
 
+                </div>
+                <a class="carousel-control-prev" href="#carousel-<?php echo $i ?>" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carousel-<?php echo $i ?>" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>
+            <?php else : ?>
+              <img src="<?php echo ROOT_URL ?>images/noimage.jpg" class="img-fluid thumbnail" />
+            <?php endif; ?>
           </li>
           <li class="list-group-item">
-            <?php echo substr(esc_html($product->description), 0, 50); ?>
+            <?php echo esc_html($product->category); ?>
             <br>
             <?php if ($product->disc_price) : ?>
               <span class="badge badge-pill badge-warning">Prezzo speciale <?php echo esc_html(number_format((float)$product->disc_price, 2, '.', '')); ?> €</span>
