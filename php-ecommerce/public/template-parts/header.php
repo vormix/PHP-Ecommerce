@@ -19,7 +19,7 @@ global $loggedInUser;
   <title><?php echo SITE_NAME; ?></title>
 
   <meta property="og:url" content="<?php echo ROOT_URL ?>shop/category12.html">
-  <meta property="og:image" content="<?php echo ROOT_URL ?>images/500/406_thumbnail.jpg">
+  <meta property="og:image" content="<?php echo ROOT_URL ?>images/logo.jpg">
 	<meta property="og:description" content="Test descrizione">
 	<meta property="og:title" content="PHP Ecommerce">
 
