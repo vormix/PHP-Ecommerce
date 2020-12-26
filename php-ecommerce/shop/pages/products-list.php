@@ -1,5 +1,8 @@
 <?php
-  echo 'hello from "' . basename(__FILE__) .'"';
+  
+  if (!defined('ROOT_URL')) {
+    die;
+  }
 
   $productMgr = new ProductManager();
   $products = $productMgr->getAll();
