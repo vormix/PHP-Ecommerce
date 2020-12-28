@@ -26,3 +26,15 @@
   width: 100%;
 }
 /* style product-card fine */
+
+/* Cart */
+
+.cart-buttons span {
+  width: 50px;
+  text-align: center;
+  border: 1px solid;
+}
+
+.cart-total {
+  font-size: 20px;
+}

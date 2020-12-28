@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.css">
   <link rel="stylesheet" href="<?php echo ROOT_URL; ?>assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
   <title>PHP E-commerce</title>
 </head>
 <body>
@@ -31,6 +32,15 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="<?php echo ROOT_URL; ?>public?page=contacts">Contatti</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ml-auto">
+        <li  class="nav-item">
+          <a class="nav-link" href="<?php echo ROOT_URL; ?>shop?page=cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge badge-success rounded-pill">1</span>
+          </a>
         </li>
       </ul>
       
