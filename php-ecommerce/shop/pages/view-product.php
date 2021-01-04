@@ -10,6 +10,20 @@ if (! isset($_GET['id'])) {
   exit;
 }
 
+if (isset($_POST['add_to_cart'])) {
+
+  $productId = htmlspecialchars(trim($_POST['id']));
+  // addToCart Logic
+  $cm = new CartManager();
+  $cartId = $cm->getCurrentCartId();
+
+  // aggiumngi al carrello "cartId" il prodotto "productId"
+  $cm->addToCart($productId, $cartId);
+
+  // stampato un messaggio per l'utente
+  echo 'ok';
+}
+
 $id = htmlspecialchars(trim($_GET['id']));
 
 $pm = new ProductManager();
