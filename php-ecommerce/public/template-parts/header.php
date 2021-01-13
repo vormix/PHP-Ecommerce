@@ -39,7 +39,7 @@
         <li  class="nav-item">
           <a class="nav-link" href="<?php echo ROOT_URL; ?>shop?page=cart">
             <i class="fas fa-shopping-cart"></i>
-            <span class="badge badge-success rounded-pill">1</span>
+            <span class="badge badge-success rounded-pill js-totCartItems"></span>
           </a>
         </li>
       </ul>

@@ -21,7 +21,7 @@ if (isset($_POST['add_to_cart'])) {
   $cm->addToCart($productId, $cartId);
 
   // stampato un messaggio per l'utente
-  echo 'ok';
+  //echo 'ok';
 }
 
 $id = htmlspecialchars(trim($_GET['id']));

@@ -14,6 +14,55 @@ class CartManager extends DbManager {
 
   // Public Methods
 
+  public function getCartTotal($cartId) {
+    $result = $this->db->query("
+   SELECT 
+      SUM(quantity) as num_products
+      , SUM(quantity* price) as total
+    FROM cart_item
+    INNER JOIN product
+      ON cart_item.product_id = product.id
+    WHERE cart_id = $cartId
+    ");
+    return $result[0];
+  }
+
+  public function getCartItems($cartId) {
+    return $this->db->query("
+    SELECT
+      product.name AS name
+      , product.description AS description
+      , product.price AS single_price
+      , cart_item.quantity AS quantity
+      , product.price * cart_item.quantity AS total_price
+      , product.id as id
+    FROM
+      cart_item 
+      INNER JOIN product 
+      ON cart_item.product_id = product.id
+    WHERE
+      cart_item.cart_id = $cartId
+    ");
+  }
+
+  public function removeFromCart($productId, $cartId) {
+
+    $quantity = 0;
+    $result = $this->db->query("SELECT quantity, id FROM cart_item WHERE cart_id = $cartId AND product_id = $productId");
+    $cartItemId = $result[0]['id'];
+    if (count($result) > 0){
+      $quantity = $result[0]['quantity'];
+    } 
+    $quantity--;
+
+    if ($quantity > 0) {
+      $this->db->execute("UPDATE cart_item SET quantity = $quantity WHERE cart_id = $cartId AND product_id = $productId");
+    } else {
+      $cartItemMgr = new CartItemManager();
+      $cartItemMgr->delete($cartItemId);
+    }
+  }
+
   public function addToCart($productId, $cartId){
     $quantity = 0;
     $result = $this->db->query("SELECT quantity FROM cart_item WHERE cart_id = $cartId AND product_id = $productId");
@@ -23,7 +72,7 @@ class CartManager extends DbManager {
     $quantity++;
 
     if (count($result) > 0) {
-      $this->db->query("UPDATE cart_item SET quantity = $quantity WHERE cart_id = $cartId AND product_id = $productId");
+      $this->db->execute("UPDATE cart_item SET quantity = $quantity WHERE cart_id = $cartId AND product_id = $productId");
     } else {
       $cartItemMgr = new CartItemManager();
       $newId = $cartItemMgr->create([
