@@ -44,16 +44,31 @@
         </li>
       </ul>
       
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Area Riservata</a>
-          <div class="dropdown-menu" aria-labelledby="dropdown01">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li>
-      </ul>
+      <?php if (!$loggedInUser) : ?>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Area Riservata
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">        
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>auth?page=login">Login</a>
+            </div>
+          </li>
+        </ul>
+      <?php endif; ?>
+
+      <?php if ($loggedInUser) : ?>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <?php echo $loggedInUser->email ?>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">        
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>auth?page=logout">Logout</a>
+            </div>
+          </li>
+        </ul>
+      <?php endif; ?>
 
     </div>
   </div>
