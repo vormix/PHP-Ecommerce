@@ -70,6 +70,19 @@
         </ul>
       <?php endif; ?>
 
+      <?php if ($loggedInUser && $loggedInUser->is_admin) : ?>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Amministrazione
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">        
+              <a class="dropdown-item" href="<?php echo ROOT_URL; ?>admin">Dashboard</a>
+            </div>
+          </li>
+        </ul>
+      <?php endif; ?>
+
     </div>
   </div>
 </nav>
