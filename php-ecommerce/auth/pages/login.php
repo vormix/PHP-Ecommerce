@@ -26,6 +26,8 @@ if (isset($_POST['login'])) {
 
 ?>
 
+<h2>Login</h2>
+
 <form method="post">
 
   <div class="form-group">
@@ -44,3 +46,5 @@ if (isset($_POST['login'])) {
 
   <button class="btn btn-primary" type="submit" name="login">Login</button>
 </form>
+
+Non hai un account ? <a href="<?php echo ROOT_URL ?>auth?page=register">Registrati &raquo;</a>

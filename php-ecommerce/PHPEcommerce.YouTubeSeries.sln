@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "PHPEcommerce.YouTubeSeries", "PHPEcommerce.YouTubeSeries.phpproj", "{F699BAFA-B739-46CD-99B7-2E2753EAF69E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F699BAFA-B739-46CD-99B7-2E2753EAF69E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F699BAFA-B739-46CD-99B7-2E2753EAF69E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DAFAC43E-577B-4EC1-BA70-9FF22E3C5C13}
+	EndGlobalSection
+EndGlobal

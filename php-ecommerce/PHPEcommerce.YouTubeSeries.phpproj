@@ -1,0 +1,100 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>PHPEcommerce.YouTubeSeries</Name>
+    <ProjectGuid>{f699bafa-b739-46cd-99b7-2e2753eaf69e}</ProjectGuid>
+    <RootNamespace>
+    </RootNamespace>
+    <OutputType>Library</OutputType>
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <Runtime>PHP</Runtime>
+    <RuntimeVersion>7.4</RuntimeVersion>
+    <SaveServerSettingsInUserFile>false</SaveServerSettingsInUserFile>
+    <EnvName>Custom</EnvName>
+    <PHPDevHostName>localhost</PHPDevHostName>
+    <PHPDevAutoPort>true</PHPDevAutoPort>
+    <CustomServerUrl>http://localhost:8012</CustomServerUrl>
+    <CustomXdebugPort>9000</CustomXdebugPort>
+    <PublishEvent>None</PublishEvent>
+    <DebugMappingMethod>Automatic</DebugMappingMethod>
+    <DBGpProxyEnabled>false</DBGpProxyEnabled>
+    <DBGpProxyPort>9001</DBGpProxyPort>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="admin\pages\dashboard.php" />
+    <Compile Include="admin\pages\index.php" />
+    <Compile Include="admin\pages\orders-list.php" />
+    <Compile Include="admin\pages\process-order.php" />
+    <Compile Include="admin\pages\product.php" />
+    <Compile Include="admin\pages\products-list.php" />
+    <Compile Include="admin\pages\user.php" />
+    <Compile Include="admin\pages\users-list.php" />
+    <Compile Include="admin\index.php" />
+    <Compile Include="assets\css\index.php" />
+    <Compile Include="assets\css\style.css" />
+    <Compile Include="assets\js\index.php" />
+    <Compile Include="assets\js\main.js" />
+    <Compile Include="assets\index.php" />
+    <Compile Include="auth\pages\index.php" />
+    <Compile Include="auth\pages\login.php" />
+    <Compile Include="auth\pages\logout.php" />
+    <Compile Include="auth\pages\register.php" />
+    <Compile Include="auth\index.php" />
+    <Compile Include="classes\Cart.php" />
+    <Compile Include="classes\DB.php" />
+    <Compile Include="classes\Product.php" />
+    <Compile Include="classes\User.php" />
+    <Compile Include="inc\config.php" />
+    <Compile Include="inc\functions.php" />
+    <Compile Include="inc\globals.php" />
+    <Compile Include="inc\index.php" />
+    <Compile Include="inc\init.php" />
+    <Compile Include="public\pages\about.php" />
+    <Compile Include="public\pages\contacts.php" />
+    <Compile Include="public\pages\homepage.php" />
+    <Compile Include="public\pages\index.php" />
+    <Compile Include="public\pages\services.php" />
+    <Compile Include="public\template-parts\footer.php" />
+    <Compile Include="public\template-parts\header.php" />
+    <Compile Include="public\template-parts\sidebar.php" />
+    <Compile Include="public\index.php" />
+    <Compile Include="shop\pages\cart.php" />
+    <Compile Include="shop\pages\checkout.php" />
+    <Compile Include="shop\pages\index.php" />
+    <Compile Include="shop\pages\my-orders.php" />
+    <Compile Include="shop\pages\products-list.php" />
+    <Compile Include="shop\pages\view-order.php" />
+    <Compile Include="shop\pages\view-product.php" />
+    <Compile Include="shop\index.php" />
+    <Compile Include="user\pages\dashboard.php" />
+    <Compile Include="user\pages\index.php" />
+    <Compile Include="user\pages\profile.php" />
+    <Compile Include="user\index.php" />
+    <Compile Include="index.php" />
+    <Compile Include="test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="admin\pages" />
+    <Folder Include="admin" />
+    <Folder Include="assets\css" />
+    <Folder Include="assets\js" />
+    <Folder Include="assets" />
+    <Folder Include="auth\pages" />
+    <Folder Include="auth" />
+    <Folder Include="classes" />
+    <Folder Include="inc" />
+    <Folder Include="public\pages" />
+    <Folder Include="public\template-parts" />
+    <Folder Include="public" />
+    <Folder Include="shop\pages" />
+    <Folder Include="shop" />
+    <Folder Include="user\pages" />
+    <Folder Include="user" />
+  </ItemGroup>
+</Project>
