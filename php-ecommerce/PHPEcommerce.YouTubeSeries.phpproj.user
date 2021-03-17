@@ -4,5 +4,6 @@
     <RuntimePath>
     </RuntimePath>
     <StartAction>DontOpenPage</StartAction>
+    <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
 </Project>
