@@ -253,17 +253,6 @@ CREATE TABLE `product` (
 -- Dump dei dati per la tabella `product`
 --
 
-INSERT INTO `product` (`id`, `name`, `description`, `category_id`, `price`, `sconto`, `data_inizio_sconto`, `data_fine_sconto`, `qta`) VALUES
-(6, 'Samsung A10 Black', 'Questo Ã¨ il prodotto numero 1 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quod quasi, illum esse obcaecati quisquam asperiores nemo eaque optio aliquid corporis soluta harum ad numquam. Exercitationem vero enim doloribus optio dolor? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quod quasi, illum esse obcaecati quisquam asperiores nemo eaque optio aliquid corporis soluta harum ad numquam. Exercitationem vero enim doloribus optio dolor?', 2, '3.90', 16, '2020-03-09', '2020-03-13', 0),
-(14, 'Prodotto 7', 'Questo Ã¨ il prodotto numero 7\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Animi ipsam cum inventore dignissimos quisquam, earum omnis excepturi accusantium incidunt dicta veritatis, amet commodi atque saepe, laborum dolorem voluptatibus aliquid illo?\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Animi ipsam cum inventore dignissimos quisquam, earum omnis excepturi accusantium incidunt dicta veritatis, amet commodi atque saepe, laborum dolorem voluptatibus aliquid illo?', 1, '8.25', 20, '2020-03-06', '2020-05-16', 0),
-(26, 'Prodotto 8', 'Questo Ã¨ il prodotto n. 8\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Animi ipsam cum inventore dignissimos quisquam, earum omnis excepturi accusantium incidunt dicta veritatis, amet commodi atque saepe, laborum dolorem voluptatibus aliquid illo?\r\n\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Animi ipsam cum inventore dignissimos quisquam, earum omnis excepturi accusantium incidunt dicta veritatis, amet commodi atque saepe, laborum dolorem voluptatibus aliquid illo?', 1, '5.90', 0, NULL, NULL, 0),
-(33, 'Prodotto 9', 'questo Ã¨ il prodotto numero 9+', 2, '3.50', 0, NULL, NULL, 0),
-(34, 'Prodotto 10', 'Questo Ã¨ il prodotto numero 10\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 1, '10.00', 0, NULL, NULL, 0),
-(35, 'Prodotto 11', 'Questo Ã¨ il prodotto numero 10\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 1, '5.00', 0, NULL, NULL, 0),
-(36, 'Prodotto 12', 'Questo Ã¨ il prodotto numero 12\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '8.00', 0, NULL, NULL, 0),
-(37, 'Prodotto 13', 'Questo Ã¨ il prodotto numero 13\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '9.99', 0, NULL, NULL, 0),
-(38, 'Prodotto 14', 'Questo Ã¨ il prodotto numero 14\r\nLorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore asperiores assumenda laborum, reprehenderit repellat suscipit eligendi officia ea saepe praesentium nisi alias porro quas sint maiores recusandae, perferendis omnis.', 2, '3.99', 0, NULL, NULL, 0);
-
 
 -- --------------------------------------------------------
 
@@ -415,4 +404,155 @@ ALTER TABLE `user`
 ALTER TABLE `product_images`
   ADD CONSTRAINT `FK_Product_Image` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`);
 COMMIT;
+
+CREATE TABLE `version` ( `version` VARCHAR(14) NOT NULL , PRIMARY KEY (`version`)) ENGINE = InnoDB;
+INSERT INTO `version` (`version`) VALUES ('1');
+
+alter table product_images drop foreign key FK_Product_Image;
+
+DROP PROCEDURE all_orders;
+DROP PROCEDURE cart_total;
+DROP PROCEDURE cart_items;
+DROP PROCEDURE cart_to_order;
+DROP PROCEDURE get_order_email;
+DROP PROCEDURE order_items;
+DROP PROCEDURE order_total;
+DROP PROCEDURE user_orders;
+
+ALTER TABLE cart ADD last_interaction DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; 
+
+ALTER TABLE orders ADD payment_code VARCHAR(255) NULL, ADD payment_status VARCHAR(255) NULL;
+
+ALTER TABLE orders ADD is_restored BIT NULL;
+
+CREATE TABLE category ( id INT NOT NULL AUTO_INCREMENT , name TEXT NOT NULL , PRIMARY KEY (id)) ENGINE = InnoDB;
+
+ALTER TABLE product_images ADD title VARCHAR(255) NULL, ADD alt VARCHAR(255) NULL, ADD order_number int(11) NULL;
+
+ALTER TABLE order_item ADD single_price DECIMAL(10, 2) NULL;
+
+UPDATE order_item oi
+INNER JOIN orders o
+  ON oi.order_id = o.id
+INNER JOIN product p
+  ON oi.product_id = p.id
+SET single_price = IF(p.sconto > 0 AND p.data_inizio_sconto <= o.created_at AND p.data_fine_sconto >=  o.created_at,
+                    CAST((p.price - (p.price * p.sconto)/100) AS DECIMAL(8,2)) 
+                    , ifnull(p.price, 0)) 
+WHERE oi.single_price IS NULL;
+
+ALTER TABLE orders ADD payment_method VARCHAR(50) NULL;
+
+ALTER TABLE orders ADD is_email_sent BIT NULL;
+
+CREATE TABLE shipment ( id INT NOT NULL AUTO_INCREMENT , name VARCHAR(2000) NOT NULL , price DECIMAL(10,2) NOT NULL , PRIMARY KEY (id)) ;
+
+ALTER TABLE product ADD mtitle TEXT NULL, ADD metadescription TEXT NULL;
+
+ALTER TABLE orders MODIFY  COLUMN is_restored INT;
+ALTER TABLE orders MODIFY  COLUMN is_email_sent INT;
+
+ALTER TABLE cart ADD shipment_id INT;
+
+ALTER TABLE orders ADD shipment_name VARCHAR(255) NULL, ADD shipment_price DECIMAL(10,2) NULL;
+
+ALTER TABLE user ADD reset_link VARCHAR(255) NULL;
+
+
+CREATE TABLE special_treatment_type
+(
+  code VARCHAR(50) NOT NULL
+  , description VARCHAR(255) NOT NULL
+  , special_treatment_name VARCHAR(255) NOT NULL
+);
+INSERT INTO special_treatment_type (code, description, special_treatment_name) VALUES ('extra-discount', 'Extra Sconto', 'Percentuale');
+INSERT INTO special_treatment_type (code, description, special_treatment_name) VALUES ('delayed-payment', 'Pagamento Ritardato', 'Giorni');
+
+CREATE TABLE special_treatment
+(
+  id INT AUTO_INCREMENT
+  , type_code VARCHAR(50) NOT NULL
+  , name VARCHAR(255) NOT NULL
+  , special_treatment_value VARCHAR(255) NOT NULL
+  , PRIMARY KEY (id)
+);
+
+CREATE TABLE profile
+(
+  id INT AUTO_INCREMENT
+  , name VARCHAR(255) NOT NULL
+  , PRIMARY KEY (id)
+);
+
+CREATE TABLE profile_treatments
+(
+  profile_id INT NOT NULL
+  , special_treatment_id INT NOT NULL
+);
+ALTER TABLE user ADD profile_id INT NULL;
+
+ALTER TABLE category ADD description LONGTEXT NULL AFTER name, ADD metadesc TEXT NULL AFTER description; 
+
+ALTER TABLE category ADD parent_id INT NULL;
+
+
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (100, 'Categoria Padre 1', NULL);
+
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (110, 'Categoria Figlio 1_1', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (120, 'Categoria Figlio 1_2', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (130, 'Categoria Figlio 1_3', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (140, 'Categoria Figlio 1_4', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (150, 'Categoria Figlio 1_5', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (160, 'Categoria Figlio 1_6', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (170, 'Categoria Figlio 1_7', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (180, 'Categoria Figlio 1_8', 100);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (190, 'Categoria Figlio 1_9', 100);
+
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (200, 'Categoria Padre 2', NULL);
+
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (210, 'Categoria Figlio 2_1', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (220, 'Categoria Figlio 2_2', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (230, 'Categoria Figlio 2_3', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (240, 'Categoria Figlio 2_4', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (250, 'Categoria Figlio 2_5', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (260, 'Categoria Figlio 2_6', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (270, 'Categoria Figlio 2_7', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (280, 'Categoria Figlio 2_8', 200);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (290, 'Categoria Figlio 2_9', 200);
+
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (300, 'Categoria Padre 3', NULL);
+
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (310, 'Categoria Figlio 3_1', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (320, 'Categoria Figlio 3_2', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (330, 'Categoria Figlio 3_3', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (340, 'Categoria Figlio 3_4', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (350, 'Categoria Figlio 3_5', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (360, 'Categoria Figlio 3_6', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (370, 'Categoria Figlio 3_7', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (380, 'Categoria Figlio 3_8', 300);
+INSERT INTO `category`(`id`, `name`, `parent_id`) VALUES (390, 'Categoria Figlio 3_9', 300);
+
+CREATE TABLE product_categories
+(
+    product_id INT
+    , subcategory_id INT
+);
+
+CREATE TABLE email
+(
+    id INT AUTO_INCREMENT
+    , subject VARCHAR(255) NOT NULL
+    , message TEXT NOT NULL
+    , PRIMARY KEY (id) 
+);
+CREATE TABLE email_recipients
+(
+  email_id INT NOT NULL
+  , recipient_id INT NOT NULL  
+);
+
+update `version` set `version` = '202003312300';
+
+update `user` set `password` = '$2y$10$MKe7.DMwSgDsPcovj7Sds.vHmp6u7Y38liYMRhXiYndlZZxrDGrS6';
+
 
