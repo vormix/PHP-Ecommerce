@@ -16,3 +16,4 @@
   require_once ROOT_PATH . 'classes/utilities/ImageUtilities.php';
   require_once ROOT_PATH . 'classes/utilities/PdfUtilities.php';
   require_once ROOT_PATH . 'classes/utilities/Utilities.php';
+  require_once ROOT_PATH . 'classes/utilities/UrlUtilities.php';

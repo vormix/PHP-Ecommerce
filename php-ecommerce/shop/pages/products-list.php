@@ -4,6 +4,8 @@
     die;
   }
 
+  $urlUtilities = new UrlUtilities('shop');
+
   $cm = new CartManager();
   if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $cm->ResetExpiredCarts();
@@ -128,7 +130,7 @@
         <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small> 
         <div class="footer">
           <div class="product-actions">
-            <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id); ?>'">Vedi</button>
+            <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo $urlUtilities->product(ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id) . '&slug=' . esc_html(preg_replace('![^a-z0-9]+!i', '-',$product->name))); ?>'">Vedi</button>
             <!--<a class="btn btn-outline-primary btn-sm" href="#">Aggiungi al carrello</a>-->
           <!-- <form method="post">-->
               <input type="hidden" name="id" value="<?php echo esc_html($product->id); ?>">
@@ -188,7 +190,7 @@ $document.ready(function(){
 
       var postData = {id: productId };
        
-      $.post('../api/shop/product-list.php', postData, response => { 
+      $.post(rootUrl + 'api/shop/product-list.php', postData, response => { 
         console.log(response);
         displayMessage(response);
         if (response.result == 'danger') return;

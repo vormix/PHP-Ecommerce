@@ -9,7 +9,7 @@ class ImageUtilities {
 
   public static function wallpaper($file) 
   {
-    return self::resizeImage($file, 1920, 1920, '');
+    return self::resizeImage($file, 1280, 1280, '');
   }
 
   private static function resizeImage($file, $w, $h, $newName = '', $crop=FALSE) 
