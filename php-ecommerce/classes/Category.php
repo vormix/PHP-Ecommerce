@@ -97,17 +97,21 @@ class Category {
         return ( $parentId != 0 || $productId != 0) ?  null : [];
       }
 
+      $urlUtilities = new UrlUtilities('shop');
+
       $categories = [
         [
           'parent' => (object) [
             'id' => $categoriesArr[0]['parent_id'],
-            'name' => $categoriesArr[0]['parent_name']
+            'name' => $categoriesArr[0]['parent_name'],
+            'url' => $urlUtilities->category($categoriesArr[0]['parent_id'], $categoriesArr[0]['parent_name'])
           ],
           'children' => [
             (object) [
               'id' => $categoriesArr[0]['child_id'],
               'name' => $categoriesArr[0]['child_name'],
               'is_selected' => $categoriesArr[0]['product_id'] > 0,
+              'url' => $urlUtilities->category($categoriesArr[0]['child_id'], $categoriesArr[0]['child_name'])
             ]
           ] 
         ]
@@ -125,13 +129,15 @@ class Category {
           $categoryGroup = [
             'parent' => (object) [
               'id' => $categoriesArr[$i]['parent_id'],
-              'name' => $categoriesArr[$i]['parent_name']
+              'name' => $categoriesArr[$i]['parent_name'],
+              'url' => $urlUtilities->category($categoriesArr[$i]['parent_id'], $categoriesArr[$i]['parent_name'])
             ],
             'children' => [
               (object) [
                 'id' => $categoriesArr[$i]['child_id'],
                 'name' => $categoriesArr[$i]['child_name'],
                 'is_selected' => $categoriesArr[$i]['product_id'] > 0,
+                'url' => $urlUtilities->category($categoriesArr[$i]['child_id'], $categoriesArr[$i]['child_name'])
               ]
             ] 
           ];
@@ -145,6 +151,7 @@ class Category {
               'id' => $categoriesArr[$i]['child_id'],
               'name' => $categoriesArr[$i]['child_name'],
               'is_selected' => $categoriesArr[$i]['product_id'] > 0,
+              'url' => $urlUtilities->category($categoriesArr[$i]['child_id'], $categoriesArr[$i]['child_name'])
             ]
           );
         }

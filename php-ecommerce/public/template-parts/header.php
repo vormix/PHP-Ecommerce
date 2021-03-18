@@ -5,6 +5,7 @@ if (! defined('ROOT_URL')) {
 }
 
 global $loggedInUser;
+$urlUtilities = new UrlUtilities('public');
 
 ?>
 
@@ -47,7 +48,10 @@ global $loggedInUser;
   var rootUrl = '<?php echo ROOT_URL ?>';
   </script>
 
-  <script>
+  <script src="<?php echo ROOT_URL; ?>assets/js/main.js"></script>
+
+<!-- Facebook SDK -->
+<script>
  (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
@@ -55,7 +59,8 @@ global $loggedInUser;
   js.src = "https://connect.facebook.net/en_IT/sdk.js#xfbml=1&version=v3.0";
   fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk')); 
-  </script>
+</script>
+<!-- Facebook SDK -->
 </head>
 
 <body>
@@ -75,16 +80,16 @@ global $loggedInUser;
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo ROOT_URL; ?>?page=about">Chi Siamo</a>
+            <a class="nav-link" href="<?php echo $urlUtilities->static('about'); ?>">Chi Siamo</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo ROOT_URL; ?>?page=services">Servizi</a>
+            <a class="nav-link" href="<?php echo $urlUtilities->static('services'); ?>">Servizi</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="<?php echo ROOT_URL; ?>shop?page=products-list">Prodotti</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo ROOT_URL; ?>?page=contacts">Contatti</a>
+            <a class="nav-link" href="<?php echo $urlUtilities->static('contacts'); ?>">Contatti</a>
           </li>
         </ul>
        

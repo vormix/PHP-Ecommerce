@@ -54,7 +54,7 @@ function populateSearchResults(products){
       <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
         <div class="d-flex justify-content-between align-items-center w-100">
           <strong class="text-gray-dark">${product.name}</strong>
-          <a style="cursor:pointer;" href="${rootUrl}shop?page=view-product&id=${product.id}">Vedi</a>
+          <a style="cursor:pointer;" href="${product.url}">Vedi</a>
         </div>
         <span class="d-block">${product.category}</span>
         <span class="d-block">€ ${product.price}</span>
@@ -93,4 +93,29 @@ function countdown(elem) {
     }
   }, 1000);
 
+}
+
+function addToCart(e) {
+  
+  var $target = $(e.target);
+  var productId = $target.attr('data-id');
+
+  var $qta = $target.closest('.product-card').find('.qta');
+  var qta = parseInt($qta.text());
+
+  var postData = {id: productId };
+  
+  $.post(rootUrl + 'api/shop/product-list.php', postData, response => { 
+    console.log(response);
+    displayMessage(response);
+    if (response.result == 'danger') return;
+    
+    if (qta <= 2) {
+      $qta.text("Non Disp.");
+      $target.attr('disabled', 'disabled');
+    } else {
+      $qta.text(--qta);
+    }
+    $('.js-totCartItems').text(parseInt($('.js-totCartItems:last').text())+1);
+  });
 }

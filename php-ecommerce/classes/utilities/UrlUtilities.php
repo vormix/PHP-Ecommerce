@@ -2,107 +2,57 @@
 
 class UrlUtilities {
 
-  private $htaccess = '.htaccess'; 
+  private $htaccess = '.htaccess';
   private $htaccessExists;
-  private $path;
   private $rootUrl;
-  private $rules;
 
   public function __construct($path = '') {
-
-    $this->path = ROOT_PATH . rtrim($path, '/') . '/';
-    $this->rootUrl = ROOT_URL . rtrim($path, '/') . '/';
-    $this->htaccessExists = file_exists($this->path . $this->htaccess);
-
+    $this->rootUrl =  $path == '' ? ROOT_URL : rtrim(ROOT_URL, '/') . '/' . rtrim($path, '/') . '/';
+    $path = $path == '' ? ROOT_PATH : rtrim(ROOT_PATH, '\\') . '\\' . rtrim($path, '\\') . '\\';
+    $this->htaccessExists = file_exists( $path . $this->htaccess);
   }
 
-  public function category($url) {
+  public function category($id, $name){
+    return $this->rewriteUrl( (object) [
+      'page' => 'products-list',
+      'id' => $id,
+      'name' => $name,
+      'segment' => 'category'
+    ]);
+  }
 
-    $originalUrl = $url;
-    if (! $this->htaccessExists) 
-      return $originalUrl;
+  public function product($id, $name){
+    return $this->rewriteUrl( (object) [
+      'page' => 'view-product',
+      'id' => $id,
+      'name' => $name,
+      'segment' => 'product'
+    ]);
+  }
 
-    $querystring = parse_url($url)['query'];
-    $parts = explode('&', $querystring);
+  public function static($page) {
+    return $this->rewriteUrl( (object) [
+      'page' => $page,
+      'segment' => $page
+    ]);
+  }
 
-    $i = 0;
-    $page = '';
-    $categoryId = 0;
-    $categorySlug = '';
-    while($i < count($parts)) {
-      $keyValuePair = explode('=', $parts[$i]);
-      if ($keyValuePair[0] == 'page') $page = $keyValuePair[1];
-      if ($keyValuePair[0] == 'categoryId') $categoryId = $keyValuePair[1];
-      if ($keyValuePair[0] == 'slug') $categorySlug = strtolower(rtrim($keyValuePair[1], '-'));
-      $i ++;
+  // Private Methods
+
+  private function rewriteUrl($params) {
+    if (isset($params->name)) {
+      $slug = strtolower(rtrim(preg_replace("![^a-z0-9]+!i", "-", $params->name), '-'));
     }
-    
-    if ($page == 'products-list' && $categoryId > 0 && $categorySlug != '') {
-      $url = $this->rootUrl . "category/$categoryId-$categorySlug";
-    }
 
+    if ($this->htaccessExists) {
+      $url = $this->rootUrl . "$params->segment";
+      $url .= isset($slug) && isset($params->id) ? "/$params->id-$slug" : "";
+    } else {
+      $url = $this->rootUrl . "?page=$params->page";
+      $url .= isset($slug) && isset($params->id) ? "&id=$params->id&slug=$slug" : "";
+    }
     return $url;
-    try {
-      
-    } catch (Exception $e) {
-      return $originalUrl;
-    }
   }
-
-  public function product($url) {
-
-    $originalUrl = $url;
-    if (! $this->htaccessExists) 
-      return $originalUrl;
-
-    $querystring = parse_url($url)['query'];
-    $parts = explode('&', $querystring);
-
-    $i = 0;
-    $page = '';
-    $id = 0;
-    $slug = '';
-    while($i < count($parts)) {
-      $keyValuePair = explode('=', $parts[$i]);
-      if ($keyValuePair[0] == 'page') $page = $keyValuePair[1];
-      if ($keyValuePair[0] == 'id') $id = $keyValuePair[1];
-      if ($keyValuePair[0] == 'slug') $slug = strtolower(rtrim($keyValuePair[1], '-'));
-      $i ++;
-    }
-    
-    if ($page == 'view-product' && $id > 0 && $slug != '') {
-      $url = $this->rootUrl . "product/$id-$slug";
-    }
-
-    return $url;
-    try {
-      
-    } catch (Exception $e) {
-      return $originalUrl;
-    }
-  }
-
-  // public function rewrite($url){
-  //   $originalUrl = $url;
-  //   if (! $this->htaccessExists) 
-  //     return $originalUrl;
-
-  //   $url = ltrim($url, $this->path);
-  //   try {
-  //     $matchingRule = null;
-  //     foreach ($this->rules as $rule) {
-  //       $match = preg_match('#' . $rule->regex . '#', $url);
-  //       if ($match > 0) {
-  //         $matchingRule = $rule;
-  //         break;
-  //       }
-  //     }
-  //     $match = preg_match('#^category/([0-9]+)-([a-z0-9-]+)/?$#', 'category/7-officia-incidunt');
-
-  //   } catch (Exception $e) {
-  //     return $originalUrl;
-  //   }
-  // }
 
 }
 

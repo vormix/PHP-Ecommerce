@@ -4,8 +4,6 @@
     die;
   }
 
-  $urlUtilities = new UrlUtilities('shop');
-
   $cm = new CartManager();
   if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $cm->ResetExpiredCarts();
@@ -28,7 +26,7 @@
     exit;
   }
 
-  $categoryId = isset($_GET['categoryId']) ? trim($_GET['categoryId']) : 0;
+  $categoryId = isset($_GET['id']) ? trim($_GET['id']) : 0;
   if (!is_numeric($categoryId)) {
     die('categoryId must be numeric...'); // prevent sql injection
   }
@@ -130,11 +128,11 @@
         <small class="text-muted right"><?php echo esc_html($product->price); ?> €</small> 
         <div class="footer">
           <div class="product-actions">
-            <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo $urlUtilities->product(ROOT_URL . 'shop?page=view-product&id=' . esc_html($product->id) . '&slug=' . esc_html(preg_replace('![^a-z0-9]+!i', '-',$product->name))); ?>'">Vedi</button>
+            <button class="btn btn-secondary btn-sm btn-block rounded-0" onclick="location.href='<?php echo $product->url; ?>'">Vedi</button>
             <!--<a class="btn btn-outline-primary btn-sm" href="#">Aggiungi al carrello</a>-->
           <!-- <form method="post">-->
               <input type="hidden" name="id" value="<?php echo esc_html($product->id); ?>">
-              <input name="add_to_cart" type="submit" class="btn btn-primary btn-sm btn-block rounded-0" value="Aggiungi al carrello" <?php echo $btn;?>>
+              <input data-id="<?php echo esc_html($product->id); ?>" name="add_to_cart" type="submit" class="btn btn-primary btn-sm btn-block rounded-0" value="Aggiungi al carrello" <?php echo $btn;?>>
             <!--</form>-->
           </div>
         </div>
@@ -180,30 +178,7 @@ $document.ready(function(){
       countdown(item);
     });
 
-    $document.find('.product-card input:submit').on('click', e => {
-     
-      var $target = $(e.target);
-      var $productButtons = $target.closest('div.product-actions');
-      var productId = $productButtons.find('input[name="id"]').val();
-      var $qta = $target.closest('.product-card').find('.qta');
-      var qta = parseInt($qta.text());
-
-      var postData = {id: productId };
-       
-      $.post(rootUrl + 'api/shop/product-list.php', postData, response => { 
-        console.log(response);
-        displayMessage(response);
-        if (response.result == 'danger') return;
-        
-        if (qta <= 2) {
-          $qta.text("Non Disp.");
-          $target.attr('disabled', 'disabled');
-        } else {
-          $qta.text(--qta);
-        }
-        $('.js-totCartItems').text(parseInt($('.js-totCartItems:last').text())+1);
-       });
-    });
+    $document.find('.product-card input:submit').on('click', addToCart);
 });
 
 </script>

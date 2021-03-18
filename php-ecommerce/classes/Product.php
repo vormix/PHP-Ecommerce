@@ -45,13 +45,6 @@ class ProductImageManager extends DBManager {
         array_push($images, (object) $img);
       }
     }
-    
-    // foreach($images as $imgKey => $imgVal){
-      
-    //   if ($imgVal->product_id != $productId) {
-    //     unset($images[$imgKey]);
-    //   }
-    // }
     return $images;
   }
 }
@@ -164,11 +157,16 @@ class ProductManager extends DBManager {
 
     $products = $this->_getProductsQuery($categoryId, $productId, $search, $limit);
     
-    foreach($products as $product){    
+    $urlUtilities = new UrlUtilities('shop');
+
+    foreach($products as $product){  
+
       $product->disc_price = NULL;
       if ($product->sconto != "0" && $product->data_inizio_sconto <= date('Y-m-d') && $product->data_fine_sconto >= date('Y-m-d')){
         $product->disc_price = $product->price - (($product->price * $product->sconto)/100.0);
       } 
+
+      $product->url = $urlUtilities->product($product->id, $product->name);
     }
     
     $pm = new ProfileManager();
@@ -180,7 +178,7 @@ class ProductManager extends DBManager {
           $product->disc_price = number_format(($product->disc_price - (($product->disc_price * $userDiscount)/100)), 2, '.', '');
         }
       }
-    }    
+    }     
 
     return $products;
   }

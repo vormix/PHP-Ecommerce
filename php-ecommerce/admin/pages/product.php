@@ -118,12 +118,12 @@ $productSubcats = $mgr->GetProductSubcategories($id);
 ?> 
 <form method="post" class="mt-2">
   <div class="form-group">
-    <label for="name">Titolo</label>
+    <label for="name"><strong>Titolo</strong></label>
     <input name="name" id="name" type="text" class="form-control" value="<?php echo esc_html($product->name); ?>">
 
   </div>
   <div class="form-group">
-    <label for="category_id">Categoria</label>
+    <label for="category_id"><strong>Categoria</strong></label>
     <select name="category_id" id="category_id" type="text" class="form-control" value="<?php echo esc_html($product->category_id); ?>">
       <option value="0"> - Scegli una categoria - </option>
       <?php if (count($categories) > 0) : ?>
@@ -144,7 +144,7 @@ $productSubcats = $mgr->GetProductSubcategories($id);
     <?php if ($productSubcats): ?>
       <div class="row pt-3">
         <div class="col-12">
-          <label>Sottocategorie</label>
+          <label><strong>Sottocategorie</strong></label>
         </div>
         <?php
         $i = 1;
@@ -153,7 +153,7 @@ $productSubcats = $mgr->GetProductSubcategories($id);
         <?php foreach ($children as $subcat): ?>
         <div class="col-md-3 col-sm-4 col-6">
           <div class="form-check">
-            <input <?php echo $subcat->is_selected  ? 'checked' : '' ?> class="form-check-input" type="checkbox" value="<?php echo $subcat->id; ?>" id="subcat-<?php echo $i; ?>">
+            <input <?php echo $subcat->is_selected  ? 'checked' : '' ?> class="form-check-input" type="checkbox" value="<?php echo $subcat->id; ?>" name="subcat-<?php echo $i; ?>" id="subcat-<?php echo $i; ?>">
             <label class="form-check-label" for="subcat-<?php echo $i; ?>">
               <?php echo $subcat->name; ?>
             </label>
@@ -173,20 +173,20 @@ $productSubcats = $mgr->GetProductSubcategories($id);
   </div>
 
   <div class="form-group">
-    <label class="mt-3" for="mtitle">Meta Titolo</label>
+    <label class="mt-3" for="mtitle"><strong>Meta Titolo</strong></label>
     <textarea rows="2" name="mtitle" id="mtitle" type="text" class="form-control"><?php echo html_entity_decode($mtitle);?></textarea>
 
-    <label class="mt-3" for="description">Descrizione</label>
+    <label class="mt-3" for="description"><strong>Descrizione</strong></label>
     <textarea rows="7" name="description" id="description" type="text" class="form-control"><?php echo html_entity_decode($descript);?></textarea>
 
-    <label class="mt-3" for="metadescription">Meta Descrizione</label>
+    <label class="mt-3" for="metadescription"><strong>Meta Descrizione</strong></label>
     <textarea rows="7" name="metadescription" id="metad" type="text" class="form-control"><?php echo html_entity_decode($metadescript);?></textarea>
   </div> 
     
   <div class="row">
     <div class="col-md-4">
       <div class="form-group">
-        <label for="description">Prezzo</label>
+        <label for="description"><strong>Prezzo</strong></label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">€</span>
@@ -197,7 +197,7 @@ $productSubcats = $mgr->GetProductSubcategories($id);
     </div>
     <div class="col-md-4">
       <div class="form-group">
-        <label for="description">Quantità</label>
+        <label for="description"><strong>Quantità</strong></label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">Pz</span>
@@ -210,7 +210,7 @@ $productSubcats = $mgr->GetProductSubcategories($id);
   <div class="row">
     <div class="col-md-4">
       <div class="form-group">
-        <label for="description">Sconto</label>
+        <label for="description"><strong>Sconto</strong></label>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">%</span>
@@ -221,7 +221,7 @@ $productSubcats = $mgr->GetProductSubcategories($id);
     </div>
     <div class="col-md-4">
       <div class="form-group">
-        <label for="description">Data Inizio</label>
+        <label for="description"><strong>Data Inizio</strong></label>
         <div class="input-group mb-3">
           <input type="date" class="form-control" id="data_inizio_sconto" name="data_inizio_sconto" value="<?php echo esc_html($product->data_inizio_sconto); ?>">
       
@@ -230,7 +230,7 @@ $productSubcats = $mgr->GetProductSubcategories($id);
     </div>
     <div class="col-md-4">
       <div class="form-group">
-        <label for="description">Data Fine</label>
+        <label for="description"><strong>Data Fine</strong></label>
         <div class="input-group mb-3">
         <input type="date" class="form-control" id="data_fine_sconto" name="data_fine_sconto" value="<?php echo esc_html($product->data_fine_sconto); ?>">
         </div>
@@ -342,7 +342,7 @@ function createSubcategoriesList(data){
   var markup = `
     <div class="row pt-3">
       <div class="col-12">
-        <label>Sottocategorie di "${data.parent.name}"</label>
+        <label><strong>Sottocategorie di "${data.parent.name}"</strong></label>
       </div>`;
 
   $.each(data.children, (i, child) => {

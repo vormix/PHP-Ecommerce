@@ -9,20 +9,6 @@
     exit;
   } 
 
-  if (isset($_POST['add_to_cart'])) {
-
-    $productId = trim($_POST['id']);
-
-    $cm = new CartManager();
-    $cartId = $cm->getCurrentCartId();
-    //var_dump($cartId); die;
-    $cm->addToCart($productId, $cartId);
-
-    $alertMsg = 'add_to_cart';
-    echo "<script>location.href='".ROOT_URL."shop?page=products-list&msg=add_to_cart';</script>";
-    exit;
-  }
-
   $id = esc_html(trim($_GET['id']));
 
   $pm = new ProductManager();
@@ -82,8 +68,7 @@
   <p><?php echo esc_html($product->description); ?></p>
   <p class="lead p-3">
     <form method="post">
-      <input name="id" type="hidden" value="<?php echo esc_html($product->id); ?>">
-      <input name="add_to_cart" type="submit" class="btn btn-primary right" value="Aggiungi al carrello">
+      <input data-id="<?php echo esc_html($product->id); ?>" name="add_to_cart" id="add_to_cart" type="button" class="btn btn-primary right" value="Aggiungi al carrello">
     </form>   
   </p>
 </div>
@@ -91,5 +76,6 @@
 <script>
     $(document).ready(function(){
       countdown($('.countdown'));
+      $('#add_to_cart').on('click', addToCart);
     });
 </script>
